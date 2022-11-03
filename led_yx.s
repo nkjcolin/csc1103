@@ -136,11 +136,68 @@ loop:
     ORR     R2, R2, R3	@check if input is valid (0) or invalid (1)
 
     CMP     R2, #0      @check if R2==0 (R2 is valid)
-    BEQ     case_1      @if R2==0, go to case_1
+    BEQ     case_0      @if R2==0, go to case_0
 
     LDR     R0, =choice_invalid     @load invalid message string into R0
     BL      printf                  @branch link to printf
-    B       end_if                  @re-loop to ask for input again
+    B       loop                    @re-loop to ask for input again
+
+case_0:
+    @ Option 0 - exit loop and end program
+    CMP     R10, #0     @compare R10 to 0 (if user entered 0)
+    MOVNE   R2, #0      @if R10!=0, R2=0
+    MOVEQ   R2, #1      @if R10==0, R2=1
+
+    CMP     R2, #0      @compare R2 to 0 (user input is not 0)
+    BEQ     case_1      @branch to loop
+
+    LDR     R0, =exit_msg       @load string into R0
+    BL      printf              @branch link to printf (print msg)
+
+    @ Turn off green LED if it is on
+    MOV     R0, R9			@get gpio mapped address
+    MOV     R1, #green_led	@get pin number of green LED
+    ADD     R4, R0, #GPCLR0	@pointer to GPSET regs.
+    MOV     R5, R1			@save pin number
+
+    @ Compute address of GPSET register and pin field        
+    MOV     R3, #registerpins	@divisor
+    UDIV    R0, R5, R3          @GPSET number
+    MUL     R1, R0, R3          @compute remainder
+    SUB     R1, R5, R1          @for relative pin position
+    LSL     R0, R0, #2          @4 bytes in a register
+    ADD     R0, R0, R4          @address of GPSETn
+        
+    @ Set up the gpio pin funtion register in programming memory
+    LDR     R2, [R0]         @get entire register
+    MOV     R3, #pinbit      @one pin
+    LSL     R3, R3, R1       @shift to pin position
+    ORR     R2, R2, R3       @clear bit
+    STR     R2, [R0]         @update register
+
+
+    @ Turn off red LED if it is on
+    MOV     R0, R9			@Get gpio mapped address
+    MOV     R1, #red_led	@get pin number of red LED
+    ADD     R4, R0, #GPCLR0	@pointer to GPSET regs.
+    MOV     R5, R1			@save pin number
+
+    @ Compute address of GPSET register and pin field        
+    MOV     R3, #registerpins   @divisor
+    UDIV    R0, R5, R3          @GPSET number
+    MUL     R1, R0, R3          @compute remainder
+    SUB     R1, R5, R1          @for relative pin position
+    LSL     R0, R0, #2          @4 bytes in a register
+    ADD     R0, R0, R4          @address of GPSETn
+        
+    @ Set up the gpio pin funtion register in programming memory
+    LDR     R2, [R0]        @get entire register
+    MOV     R3, #pinbit     @one pin
+    LSL     R3, R3, R1      @shift to pin position
+    ORR     R2, R2, R3      @clear bit
+    STR     R2, [R0]        @update register
+    
+    B       end            @end case_0, branch back and rerun loop
 
 case_1:
     @ Option 1 - turn on red LED
@@ -159,8 +216,8 @@ case_1:
     MOV     R1, #red_led        @get pin number of green LED
     ADD     R4, R0, #GPSET0     @point to GPSET regs in R4
     MOV     R7, R1              @save pin number
-        
-	@ Compute address of GPSET register and pin field        
+    
+    @ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins   @divisor
     UDIV    R0, R7, R3          @GPSET number
     MUL     R1, R0, R3          @compute remainder
@@ -168,14 +225,14 @@ case_1:
     LSL     R0, R0, #2          @4 bytes in a register
     ADD     R0, R0, R4          @address of GPSETn
         
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin funtion register in programming memory
     LDR     R2, [R0]        @get entire register
     MOV     R3, #pinbit     @one pin
     LSL     R3, R3, R1      @shift to pin position
     ORR     R2, R2, R3      @set bit
     STR     R3, [R0]        @update register
 
-    B       end_if			@end case_1
+    B       loop            @end case_1, branch back and rerun loop
     
 case_2:
     @ Option 2 - turn on green LED
@@ -195,7 +252,7 @@ case_2:
     ADD     R4, R0, #GPSET0     @point to GPSET regs in R4
     MOV     R5, R1              @save pin number
         
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins   @divisor
     UDIV    R0, R5, R3          @GPSET number
     MUL     R1, R0, R3          @compute remainder
@@ -203,14 +260,14 @@ case_2:
     LSL     R0, R0, #2          @4 bytes in a register
     ADD     R0, R0, R4          @address of GPSETn
         
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin funtion register in programming memory
     LDR     R2, [R0]        @get entire register
     MOV     R3, #pinbit     @one pin
     LSL     R3, R3, R1      @shift to pin position
     ORR     R2, R2, R3      @set bit
     STR     R2, [R0]        @update register
-	
-    B       end_if			@end case_2
+        
+    B       loop			@end case_2, branch back and rerun loop
 
 case_3:
     @ Option 3 - turn off all LEDs
@@ -219,7 +276,7 @@ case_3:
     MOVEQ   R2, #1      @if R10==3, R2=1
 
     CMP     R2, #0      @compare R2 to 0 (user input is not 3)
-    BEQ     end_if      @branch to end_if
+    BEQ     loop      @branch to loop
 
     LDR     R0, =off_led_msg    @load off_led_msg string into R2
     BL      printf              @branch link to printf
@@ -230,7 +287,7 @@ case_3:
     ADD     R4, R0, #GPCLR0	@pointer to GPSET regs.
     MOV     R5, R1			@save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins	@divisor
     UDIV    R0, R5, R3          @GPSET number
     MUL     R1, R0, R3          @compute remainder
@@ -238,7 +295,7 @@ case_3:
     LSL     R0, R0, #2          @4 bytes in a register
     ADD     R0, R0, R4          @address of GPSETn
         
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin funtion register in programming memory
     LDR     R2, [R0]         @get entire register
     MOV     R3, #pinbit      @one pin
     LSL     R3, R3, R1       @shift to pin position
@@ -246,13 +303,13 @@ case_3:
     STR     R2, [R0]         @update register
 
 
-	@ Turn off red LED
+    @ Turn off red LED
     MOV     R0, R9			@Get gpio mapped address
     MOV     R1, #red_led	@get pin number of red LED
     ADD     R4, R0, #GPCLR0	@pointer to GPSET regs.
     MOV     R5, R1			@save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins   @divisor
     UDIV    R0, R5, R3          @GPSET number
     MUL     R1, R0, R3          @compute remainder
@@ -260,25 +317,19 @@ case_3:
     LSL     R0, R0, #2          @4 bytes in a register
     ADD     R0, R0, R4          @address of GPSETn
         
-	@ Set up the gpio pin funtion register in programming memory
-    LDR		R2, [R0]		@get entire register
-    MOV     R3, #pinbit		@one pin
-    LSL     R3, R3, R1		@shift to pin position
-    ORR     R2, R2, R3		@clear bit
-    STR     R2, [R0]		@update register
-
-	B       end_if          @end case_3
-
-end_if:
-    @ End if-else loop 
-    B       loop        @branch back and rerun loop
+    @ Set up the gpio pin funtion register in programming memory
+    LDR     R2, [R0]        @get entire register
+    MOV     R3, #pinbit     @one pin
+    LSL     R3, R3, R1      @shift to pin position
+    ORR     R2, R2, R3      @clear bit
+    STR     R2, [R0]        @update register
+    
+    B       loop            @end case_3, branch back and rerun loop
 
 end:
     POP 	{R8}        @restore SP to entry level
     POP 	{R9}
     MOV 	R7, #1
-    LDR     R0, =exit_msg       @load string into R0
-    BL      printf              @branch link to printf (print msg)
     POP     {ip, pc}            @pop ip reg, return
 
 map_gpio:
@@ -298,15 +349,15 @@ map_gpio:
     MOV     R3, #mapshare   @share with other processes
     BL      mmap            @R0-R3+top of stack has info
     MOV     R9, R0          @save mapped address
-    
-	CMP     R0, #-1         @check for error
+
+    CMP     R0, #-1         @check for error
     BNE     setup_pins		@if no error, go to setup_pins
     LDR     R0, memerror    @if there is error, display error message
     BL      printf			@branch link to printf
     B       end 			@branch to end (end program)
 
 setup_pins:  
-	@ Select gpio pin number of green LED and function.
+    @ Select gpio pin number of green LED and function.
     MOV     R0, R9          @programming memory
     MOV     R1, #green_led  @gpio pin for green LED
     MOV     R2, #output     @pin function (output)
@@ -314,13 +365,13 @@ setup_pins:
     MOV     R5, R1          @save gpio pin number for green LED
     MOV     R6, R2          @save function code
 
-	@ Compute address of GPFSEL register and pin field
+    @ Compute address of GPFSEL register and pin field
     MOV     R3, #10         @divisor
     UDIV    R0, R5, R3      @GPFSEL number
     MUL     R1, R0, R3      @compute remainder
     SUB     R1, R5, R1      @for GPFSEL pin    
         
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin funtion register in programming memory
     LSL     R0, R0, #2      @4 bytes in a register
     ADD     R0, R4, R0      @GPFSELn address
     LDR     R2, [R0]        @get entire register
@@ -336,7 +387,7 @@ setup_pins:
     STR     R2, [R0]        @update register
 
  
-	@ Select gpio pin number of red LED and function. @* changed R12 back to R2, see if have error
+    @ Select gpio pin number of red LED and function. @* changed R12 back to R2, see if have error
     MOV     R0, R9			@programming memory
     MOV     R1, #red_led    @gpio pin for red LED
     MOV     R2, #output		@pin function
@@ -344,13 +395,13 @@ setup_pins:
     MOV     R5, R1          @save gpio pin of red LED
     MOV     R6, R2			@save function code
 
-	@ Compute address of GPFSEL register and pin field
+    @ Compute address of GPFSEL register and pin field
     MOV     R3, #10         @divisor
     UDIV    R0, R5, R3      @GPFSEL number
     MUL     R1, R0, R3      @compute remainder
     SUB     R1, R5, R1      @for GPFSEL pin    
         
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin funtion register in programming memory
     LSL     R0, R0, #2      @4 bytes in a register
     ADD     R0, R4, R0      @GPFSELn address
     LDR     R2, [R0]        @get entire register
@@ -364,19 +415,30 @@ setup_pins:
     LSL     R6, R6, R1      @shift function code to pin position
     ORR     R2, R2, R6      @enter function code
     STR     R2, [R0]        @update register
-    B       loop			@branch to loop after setup complete
+    B       loop            @branch to loop after setup complete
 
 
 
-@ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @
-@                                                                               @
-@ Citation                                                                      @
-@                                                                               @
-@ Title: Raspberry Pi Operating System Assembly Language                        @
-@ Author: Bruce Smith                                                           @
-@ Date published: March 18, 2021                                                @
-@ Date cited: November 2, 2022                                                  @
-@ Code version: 4th edition                                                     @
-@ Availability: https://www.brucesmith.info/raspberry-pi-assembly-language.html @
-@                                                                               @
-@ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @ @
+@======================================================================================@                                                                                           
+@ Citation                                                                                  
+                                                                                          
+@ Title: Raspberry Pi Operating System Assembly Language                                    
+@ Author: Bruce Smith                                                                       
+@ Date published: March 18, 2021                                                            
+@ Date cited: November 2, 2022                                                              
+@ Code version: 4th edition                                                                 
+@ Availability: https://www.brucesmith.info/raspberry-pi-assembly-language.html             
+                                                                                           
+@ Title: ARM assembler in Raspberry Pi – Chapter 9                                          
+@ Author: Roger Ferrer Ibáñez                                                               
+@ Date published: February 2, 2013                                                          
+@ Date cited: November 2, 2022                                                              
+@ Availability: https://thinkingeek.com/2013/02/02/arm-assembler-raspberry-pi-chapter-9/    
+                                                                                         
+@ Title: Introduction To MIPS Assembly Language Programming                                 
+@ Author: Charles W. Kann III                                                               
+@ Date published: August 2, 2021                                                            
+@ Date cited: November 2, 2022                                                              
+@ Availability: https://eng.libretexts.org/Bookshelves/Computer_Science/Programming_Languages/Introduction_To_MIPS_Assembly_Language_Programming_(Kann)
+
+@======================================================================================@
