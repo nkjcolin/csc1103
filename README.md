@@ -1,2 +1,7 @@
-# csc1103
-tictactoe
+final.c
+check.c
+place.c
+display.c
+twoplayer.c
+
+project.h
