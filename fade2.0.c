@@ -7,8 +7,8 @@
 #include <termio.h>
 #include <unistd.h>
 
-#define RED 24    // GPIO 24 (Pin 16)
-#define GREEN 23  // GPIO 23 (Pin 18)
+#define RED 13    // GPIO 24 (Pin 16)
+#define GREEN 19  // GPIO 23 (Pin 18)
 
 void askMode();
 void blink2Hz();
