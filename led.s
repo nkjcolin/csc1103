@@ -1,6 +1,6 @@
-
+@ led.s - turn on and off LED lights connected to GPIO of RPi 4 (Question 2 Task 2)
 @ Constants for assembler - memory map associated
-.equ    gpiobase, 0x3F000000     @ RPi 2,3,4, 400 peripherals
+.equ    gpiobase, 0x3F000000    @ Raspberry Pi 4 peripherals base address
 .equ    offset,  0x200000       @ start of GPIO device
 .equ    prot_read, 0x1          @ can be read
 .equ    prot_write,0x2          @ can be written
@@ -18,34 +18,33 @@
 @ Constants for Function Select
 .equ    red_led, 19         @ pin set bit
 .equ    green_led, 13       @ pin set bits
-.equ    output,   1            @ use pin for ouput
-.equ    pinfield, 0b111        @ 3 bits
+.equ    output, 1           @ use pin for ouput
+.equ    pinfield, 0b111     @ 3 bits
 
 
 @ Constants for assembler pinclear and pinset
-.equ  pinbit,       1           @ 1 bit for pin
+.equ  pinbit, 1         @ 1 bit for pin
 .equ  registerpins, 32
-.equ  GPCLR0,   0x28            @ clear register offset
-.equ  GPSET0,   0x1c            @ set register offset
+.equ  GPCLR0, 0x28      @ clear register offset
+.equ  GPSET0, 0x1c      @ set register offset
 
 @ addresses of messages
-devicefile:     .word   device
-openMode:       .word   openflags
-gpio:           .word   gpiobase+offset
-openerror:      .word   openstring1
-memerror:       .word   memstring2
+devicefile: .word device
+openMode: .word openflags
+gpio: .word gpiobase+offset
+openerror: .word openstring1
+memerror: .word memstring2
    
 
 @ Constant program data
 .section .rodata
-.align  2
-device:         .asciz  "/dev/gpiomem"
-openstring1:    .asciz  "Didnt open /dev/gpiomem\n"
-memstring2:     .asciz  "Didnt Map /dev/gpiomem \n"
+device: .asciz  "/dev/gpiomem"
+openstring1: .asciz  "Didnt open /dev/gpiomem\n"
+memstring2: .asciz  "Didnt Map /dev/gpiomem \n"
+
 
 @ Data section to store initialized data or constants
 .data
-
 @ message to prompt for input
 .balign 4
 choice_menu: .asciz "\n=======Choices=======\n [1]turn on red LED\n [2]turn on green LED\n [3]turn off LEDs\n [0]exit\n\nEnter your choice: "
@@ -95,25 +94,25 @@ main:
     LDR     R0, devicefile  @ address of /dev/gpiomem string
     LDR     R1, openMode    @ flags for accessing device
     BL      open            @ call open
-    MOVS    R4, R0		@ error check
+    MOVS    R4, R0		    @ error check
     BPL     map_gpio		@ If positive, moveon
     LDR     R0, openerror   @ error, tell user
     BL      printf
     
 LOOP:    
-    LDR R0, address_menu_input @ load address_menu_input into R0
+    LDR R0, address_choice_menu @ load address_choice_menu into R0
     BL printf @ branch and link to call the function printf
 
-    LDR R0, address_of_scan_pattern @ load address_of_user_input into r0
-    LDR R1, address_of_user_input @ load user input into r1
+    LDR R0, address_choice_pattern @ load address_choice_input into r0
+    LDR R1, address_choice_input @ load user input into r1
     BL scanf @ branch and link to call the function scanf
 
-    LDR R0, address_option_message @ load address_option_message into r0
-    LDR R1, address_of_user_input @ load address_of_user_input into r1
+    LDR R0, address_choice_sel @ load address_choice_sel into r0
+    LDR R1, address_choice_input @ load address_choice_input into r1
     LDR  R1, [R1] @ load the integer input into r1
     BL printf  @ branch and link to call the function printf
 
-    LDR R0, address_of_user_input @ load address_of_user_input into r0
+    LDR R0, address_choice_input @ load address_choice_input into r0
     LDR R0, [R0] @ load the integer input into r0
 
     @ If option is neither 1, 2, 3 or 4 it will be an invalid option
@@ -148,12 +147,12 @@ END:
     POP     {ip, pc}    @ pop ip and lr reg value to PC, return
 
 invalid_option:
-    LDR R0, address_of_invalid_option @ load address_of_invalid_option into r0
+    LDR R0, address_choice_invalid @ load address_choice_invalid into r0
     BL printf @ branch and link to call the function printf
     B LOOP @ branch back and re-run the loop
 
 case_1:
-    LDR R0, address_option_one @ load address_option_one into r0
+    LDR R0, address_case_one_msg @ load address_case_one_msg into r0
     BL printf @ branch and link to call the function printf
 
     @ Turn on red LED
@@ -180,7 +179,7 @@ case_1:
     B LOOP @ branch back and re-run the loop
 
 case_2:
-    LDR R0, address_option_two @ load address_option_two into r0
+    LDR R0, address_case_two_msg @ load address_case_two_msg into r0
     BL printf @ branch and link to call the function printf
 
     @ Turn on green LED
@@ -207,7 +206,7 @@ case_2:
     B LOOP @ branch back and re-run the loop
 
 case_3:
-    LDR R0, address_option_three @ load address_option_three into r0
+    LDR R0, address_case_three_msg @ load address_case_three_msg into r0
     BL printf @ branch and link to call the function printf
 
     @ Turn off green LED
@@ -330,74 +329,75 @@ map_gpio:
     B       END 
 
 set_pin:  
-@  Select pin number and function. (green)
+    @  Select pin number of green LED and function.
     MOV     R0, R9          @ programming memory
-    MOV     R1, #green_led  @ pin number
+    MOV     R1, #green_led  @ GPIO pin number of green LED
     MOV     R2, #output     @ pin function
     MOV     R4, R0          @ save pointer to GPIO
     MOV     R5, R1          @ save pin number
     MOV     R6, R2          @ save function code
 
-@ Compute address of GPFSEL register and pin field
+    @ Compute address of GPFSEL register and pin field
     MOV     R3, #10         @ divisor
     UDIV    R0, R5, R3      @ GPFSEL number
     MUL     R1, R0, R3      @ compute remainder
     SUB     R1, R5, R1      @ for GPFSEL pin    
         
-@ Set up the GPIO pin funtion register in programming memory
-    LSL     R0, R0, #2      @4 bytes in a register
+    @ Set up the GPIO pin funtion register in programming memory
+    LSL     R0, R0, #2      @ 4 bytes in a register
     ADD     R0, R4, R0      @ GPFSELn address
     LDR     R2, [R0]        @ get entire register
     
-    MOV     R3, R1          @ need to multiply pin
-    ADD     R1, R1, R3, lsl #1   @    position by 3
-    MOV     R3, #pinfield   @ gpio pin field
-    LSL     R3, R3, R1      @ shift to pin position
-    BIC     R2, R2, R3      @ clear pin field
+    MOV     R3, R1              @ need to multiply pin
+    ADD     R1, R1, R3, lsl #1  @ position by 3
+    MOV     R3, #pinfield       @ gpio pin field
+    LSL     R3, R3, R1          @ shift to pin position
+    BIC     R2, R2, R3          @ clear pin field
 
     LSL     R6, R6, R1      @ shift function code to pin position
     ORR     R2, R2, R6      @ enter function code
     STR     R2, [R0]        @ update register
 
-@  Select pin number and function. (red)
-    MOV     R0, R9          @programming memory
-    MOV     R1, #red_led    @pin number for red LED
-    MOV     R10, #output     @pin function
-    MOV     R4, R0          @save pointer to GPIO
-    MOV     R5, R1          @save pin number
-    MOV     R6, R10          @save function code
+    @ Select pin number of red LED and function.
+    MOV     R0, R9          @ programming memory
+    MOV     R1, #red_led    @ GPIO pin number of red LED
+    MOV     R10, #output    @ pin function
+    MOV     R4, R0          @ save pointer to GPIO
+    MOV     R5, R1          @ save pin number
+    MOV     R6, R10         @ save function code
 
-@ Compute address of GPFSEL register and pin field
-    MOV     R3, #10         @divisor
-    UDIV    R0, R5, R3      @GPFSEL number
-    MUL     R1, R0, R3      @compute remainder
-    SUB     R1, R5, R1      @for GPFSEL pin    
+    @ Compute address of GPFSEL register and pin field
+    MOV     R3, #10         @ divisor
+    UDIV    R0, R5, R3      @ GPFSEL number
+    MUL     R1, R0, R3      @ compute remainder
+    SUB     R1, R5, R1      @ for GPFSEL pin    
         
-@ Set up the GPIO pin funtion register in programming memory
-    LSL     R0, R0, #2      @4 bytes in a register
-    ADD     R0, R4, R0      @GPFSELn address
-    LDR     R10, [R0]        @get entire register
+    @ Set up the GPIO pin funtion register in programming memory
+    LSL     R0, R0, #2      @ 4 bytes in a register
+    ADD     R0, R4, R0      @ GPFSELn address
+    LDR     R10, [R0]       @ get entire register
     
-    MOV     R3, R1                  @need to multiply pin
-    ADD     R1, R1, R3, lsl #1      @position by 3
-    MOV     R3, #pinfield           @gpio pin field
-    LSL     R3, R3, R1              @shift to pin position
-    BIC     R10, R10, R3              @clear pin field
+    MOV     R3, R1                  @ need to multiply pin
+    ADD     R1, R1, R3, lsl #1      @ position by 3
+    MOV     R3, #pinfield           @ gpio pin field
+    LSL     R3, R3, R1              @ shift to pin position
+    BIC     R10, R10, R3            @ clear pin field
 
-    LSL     R6, R6, R1      @shift function code to pin position
-    ORR     R10, R10, R6      @enter function code
-    STR     R10, [R0]        @update register
+    LSL     R6, R6, R1      @ shift function code to pin position
+    ORR     R10, R10, R6    @ enter function code
+    STR     R10, [R0]       @ update register
     B       LOOP
 
-address_menu_input : .word choice_menu
-address_option_message : .word choice_sel
-address_of_scan_pattern : .word choice_pattern
-address_of_user_input : .word choice_input
-address_of_invalid_option: .word choice_invalid
-address_option_one : .word on_red_msg
-address_option_two : .word on_green_msg
-address_option_three : .word off_led_msg
+address_choice_menu : .word choice_menu
+address_choice_sel : .word choice_sel
+address_choice_pattern : .word choice_pattern
+address_choice_input : .word choice_input
+address_choice_invalid: .word choice_invalid
+address_case_one_msg : .word on_red_msg
+address_case_two_msg : .word on_green_msg
+address_case_three_msg : .word off_led_msg
 address_exit: .word exit_msg
+
 
 @ Reference
 @ Title: Raspberry Pi Operating System Assembly Language                        
@@ -406,4 +406,3 @@ address_exit: .word exit_msg
 @ Date cited: November 2, 2022                                                  
 @ Code version: 4th edition                                                     
 @ Availability: https://www.brucesmith.info/raspberry-pi-assembly-language.html 
-
