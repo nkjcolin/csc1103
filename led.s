@@ -157,7 +157,7 @@ case_1:
 
     @ Turn on red LED
     MOV     R0, R9              @ get memory address
-    MOV     R1, #red_led        @ get pin number of green LED
+    MOV     R1, #red_led        @ get pin number of red LED
     ADD     R4, R0, #GPSET0     @ point to GPSET regs in R4
     MOV     R7, R1              @ save pin number
 
@@ -388,6 +388,7 @@ set_pin:
     STR     R10, [R0]       @ update register
     B       LOOP
 
+@ addresses of input and input messages
 address_choice_menu : .word choice_menu
 address_choice_sel : .word choice_sel
 address_choice_pattern : .word choice_pattern
