@@ -235,13 +235,13 @@ case_3:
     MOV     R0, R9			@ get gpio mapped address
     MOV     R1, #red_led	@ get pin number of red LED
     ADD     R4, R0, #GPCLR0	@ pointer to GPSET regs.
-    MOV     R5, R1			@ save pin number
+    MOV     R7, R1			@ save pin number
 
 	@ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins   @ divisor
-    UDIV    R0, R5, R3          @ GPSET number
+    UDIV    R0, R7, R3          @ GPSET number
     MUL     R1, R0, R3          @ compute remainder
-    SUB     R1, R5, R1          @ for relative pin position
+    SUB     R1, R7, R1          @ for relative pin position
     LSL     R0, R0, #2          @ 4 bytes in a register
     ADD     R0, R0, R4          @ address of GPSETn
 
@@ -250,7 +250,7 @@ case_3:
     MOV     R3, #pinbit		@ one pin
     LSL     R3, R3, R1		@ shift to pin position
     ORR     R2, R2, R3		@ clear bit
-    STR     R2, [R0]		@ update register
+    STR     R3, [R0]		@ update register
 
     B LOOP @ branch back and re-run the loop
 
@@ -282,13 +282,13 @@ case_0:
     MOV     R0, R9			@ get gpio mapped address
     MOV     R1, #red_led	@ get pin number of red LED
     ADD     R4, R0, #GPCLR0	@ pointer to GPSET regs.
-    MOV     R5, R1			@ save pin number
+    MOV     R7, R1			@ save pin number
 
 	@ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins   @ divisor
-    UDIV    R0, R5, R3          @ GPSET number
+    UDIV    R0, R7, R3          @ GPSET number
     MUL     R1, R0, R3          @ compute remainder
-    SUB     R1, R5, R1          @ for relative pin position
+    SUB     R1, R7, R1          @ for relative pin position
     LSL     R0, R0, #2          @ 4 bytes in a register
     ADD     R0, R0, R4          @ address of GPSETn
 
@@ -297,7 +297,7 @@ case_0:
     MOV     R3, #pinbit		@ one pin
     LSL     R3, R3, R1		@ shift to pin position
     ORR     R2, R2, R3		@ clear bit
-    STR     R2, [R0]		@ update register
+    STR     R3, [R0]		@ update register
 
     LDR R0, address_exit @ load address_exit into r0
     BL printf @ branch and link to call the function printf
