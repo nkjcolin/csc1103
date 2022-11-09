@@ -7,8 +7,8 @@
 #include <termio.h>
 #include <unistd.h>
 
-#define RED 13    // GPIO 13 (Pin 33)
-#define GREEN 19  // GPIO 19 (Pin 35)
+#define RED 19    // GPIO 19 (Pin 35)
+#define GREEN 13  // GPIO 13 (Pin 33)
 
 void askMode();
 void blink2Hz();
@@ -35,10 +35,10 @@ int main()
     ("GPIO initialisation successful!\n");
   }
 
-  pinMode(RED, OUTPUT);       // Sets GPIO 13 (Pin 33) as output mode for Wiring Pi library
-  pinMode(GREEN, OUTPUT);     // Sets GPIO 19 (Pin 35) as output mode for Wiring Pi library
-  gpioSetMode(RED, OUTPUT);   // Sets GPIO 13 (Pin 33) as output mode for Pi GPIO library
-  gpioSetMode(GREEN, OUTPUT); // Sets GPIO 19 (Pin 35) as output mode for Pi GPIO library
+  pinMode(RED, OUTPUT);       // Sets GPIO 19 (Pin 35) as output mode for Wiring Pi library
+  pinMode(GREEN, OUTPUT);     // Sets GPIO 13 (Pin 33) as output mode for Wiring Pi library
+  gpioSetMode(RED, OUTPUT);   // Sets GPIO 19 (Pin 35) as output mode for Pi GPIO library
+  gpioSetMode(GREEN, OUTPUT); // Sets GPIO 13 (Pin 33) as output mode for Pi GPIO library
 
   while(1)
   {
@@ -64,6 +64,7 @@ int main()
             if(kbhit()) // Detects keyboard input to interrupt blinking
             {
               int k = getchar();
+              gpioPWM(GREEN, 0);
               if(k == '0')
               {
                 turnOFF();
@@ -78,9 +79,10 @@ int main()
               {
                 blink2Hz();
               }
-	            if(k == '3')
+              if(k == '3')
               {
                 blink8Hz();
+                choice = 3;
               }
             }
           }
@@ -93,6 +95,7 @@ int main()
             if(kbhit()) // Detects keyboard input to interrupt blinking
             {
               int k = getchar();
+              gpioPWM(GREEN, 0);
               if(k == '0')
               {
                 turnOFF();
@@ -105,12 +108,13 @@ int main()
               }
               if(k == '2')
               {
-		            blink2Hz();
+                blink2Hz();
+                choice = 2;
               }
               if(k == '3')
               {
                 blink8Hz();
-	            }
+              }
             }
           }
           break;
@@ -138,44 +142,56 @@ void askMode() // Prompts user for input
 
 void blink2Hz()
 {
-  // First cycle : 0.5s, both LEDs turn ON for 250ms
-  digitalWrite(RED, HIGH);
-  digitalWrite(GREEN, HIGH);
-  delay(250);
+  /**************************************/
+  /*      Half second loop function     */
+  /*Repeats loop 2 times for 1 sec cycle*/
+  /**************************************/
 
-  // Second cycle : 0.5s, both LEDs turn OFF for 250ms
-  digitalWrite(RED, LOW);
-  digitalWrite(GREEN, LOW);
-  delay(250);
+  for (int i = 1; i <= 2; i++)
+  {
+    // First cycle : 0.5s, both LEDs turn ON for 250ms
+    digitalWrite(RED, HIGH);
+    digitalWrite(GREEN, HIGH);
+    delay(250);
+
+    // Second cycle : 0.5s, both LEDs turn OFF for 250ms
+    digitalWrite(RED, LOW);
+    digitalWrite(GREEN, LOW);
+    delay(250);
+  }
 }
 
 void blink8Hz()
 {
-  /***************************/
-  /*Half second loop function*/
-  /***************************/
+  /**************************************/
+  /*      Half second loop function     */
+  /*Repeats loop 2 times for 1 sec cycle*/
+  /**************************************/
 
-  // First cycle: 0.25s, GREEN turns ON, RED blinks 2 times 
-  gpioWrite(RED, 1);
-  gpioPWM(GREEN, 32); // 255 max PWM * 12.5% duty cycle
-  delay(62.5);
-  gpioWrite(RED, 0);
-  delay(62.5);
-  gpioWrite(RED, 1);
-  delay(62.5);
-  gpioWrite(RED, 0);
-  delay(62.5);
+  for (int i = 1; i <= 2; i++)
+  {
+    // First cycle: 0.25s, GREEN turns ON, RED blinks 2 times
+    gpioWrite(RED, 1);
+    gpioPWM(GREEN, 32); // 255 max PWM * 12.5% duty cycle
+    delay(62.5);
+    gpioWrite(RED, 0);
+    delay(62.5);
+    gpioWrite(RED, 1);
+    delay(62.5);
+    gpioWrite(RED, 0);
+    delay(62.5);
 
-  // Second cycle: 0.25s, GREEN turns OFF, RED blinks 2 times 
-  gpioWrite(RED,1);
-  gpioPWM(GREEN, 0); // 0 PWM, 0% duty cycle
-  delay(62.5);
-  gpioWrite(RED, 0);
-  delay(62.5);
-  gpioWrite(RED, 1);
-  delay(62.5);
-  gpioWrite(RED, 0);
-  delay(62.5);
+    // Second cycle: 0.25s, GREEN turns OFF, RED blinks 2 times
+    gpioWrite(RED,1);
+    gpioPWM(GREEN, 128); // 255 max PWM * 50% duty cycle
+    delay(62.5);
+    gpioWrite(RED, 0);
+    delay(62.5);
+    gpioWrite(RED, 1);
+    delay(62.5);
+    gpioWrite(RED, 0);
+    delay(62.5);
+  }
 }
 
 void turnON()
