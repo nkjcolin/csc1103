@@ -35,10 +35,10 @@ int main()
     ("GPIO initialisation successful!\n");
   }
 
-  pinMode(RED, OUTPUT);       // Sets GPIO 24 (Pin 16) as output mode for Wiring Pi library
-  pinMode(GREEN, OUTPUT);     // Sets GPIO 23 (Pin 18) as output mode for Wiring Pi library
-  gpioSetMode(RED, OUTPUT);   // Sets GPIO 24 (Pin 16) as output mode for Pi GPIO library
-  gpioSetMode(GREEN, OUTPUT); // Sets GPIO 23 (Pin 18) as output mode for Pi GPIO library
+  pinMode(RED, OUTPUT);       // Sets GPIO 13 (Pin 33) as output mode for Wiring Pi library
+  pinMode(GREEN, OUTPUT);     // Sets GPIO 19 (Pin 35) as output mode for Wiring Pi library
+  gpioSetMode(RED, OUTPUT);   // Sets GPIO 13 (Pin 33) as output mode for Pi GPIO library
+  gpioSetMode(GREEN, OUTPUT); // Sets GPIO 19 (Pin 35) as output mode for Pi GPIO library
 
   while(1)
   {
