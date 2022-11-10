@@ -1,7 +1,6 @@
 #include <wiringPi.h>
 #include <pigpio.h>
 #include <stdio.h>
-#include <softPwm.h>
 #include <stdbool.h>
 #include <string.h>
 #include <termio.h>
