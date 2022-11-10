@@ -1,19 +1,19 @@
 @ led.s - turn on and off LED lights connected to GPIO of RPi 4 (Question 2 Task 2)
 @ Constants for assembler - memory map associated
 .equ    gpiobase, 0x3F000000    @ Raspberry Pi 4 peripherals base address
-.equ    offset,  0x200000       @ start of GPIO device
+.equ    offset, 0x200000        @ start of GPIO device
 .equ    prot_read, 0x1          @ can be read
 .equ    prot_write,0x2          @ can be written
-.equ    readwrite,prot_read|prot_write
-.equ    mapshare,  0x01         @ share changes
-.equ    nopref,    0
-.equ    pagesize,  4096         @ memory size
+.equ    readwrite, prot_read|prot_write
+.equ    mapshare, 0x01          @ share changes
+.equ    nopref, 0
+.equ    pagesize, 4096          @ memory size
  
-.equ    O_RDWR,  00000002       @ open for read/write
+.equ    O_RDWR, 00000002        @ open for read/write
 .equ    O_DSYNC, 00010000       @ values are octal not hex
-.equ    __O_SYNC,04000000
-.equ    O_SYNC,__O_SYNC|O_DSYNC
-.equ    openflags,O_RDWR|O_SYNC @ open file flags
+.equ    __O_SYNC, 04000000
+.equ    O_SYNC, __O_SYNC|O_DSYNC
+.equ    openflags, O_RDWR|O_SYNC @ open file flags
 
 @ Constants for Function Select
 .equ    red_led, 19         @ pin set bit
@@ -28,16 +28,17 @@
 .equ  GPCLR0, 0x28      @ clear register offset
 .equ  GPSET0, 0x1c      @ set register offset
 
-@ addresses of messages
+@ Addresses of messages
 devicefile: .word device
 openMode: .word openflags
 gpio: .word gpiobase+offset
 openerror: .word openstring1
 memerror: .word memstring2
-   
 
-@ Constant program data
+
+@ Read-only data section for constants
 .section .rodata
+@ constant program data
 device: .asciz  "/dev/gpiomem"
 openstring1: .asciz  "Didnt open /dev/gpiomem\n"
 memstring2: .asciz  "Didnt Map /dev/gpiomem \n"
@@ -157,11 +158,11 @@ case_1:
 
     @ Turn on red LED
     MOV     R0, R9              @ get memory address
-    MOV     R1, #red_led        @ get pin number of green LED
+    MOV     R1, #red_led        @ get pin number of red LED
     ADD     R4, R0, #GPSET0     @ point to GPSET regs in R4
     MOV     R7, R1              @ save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins   @ divisor
     UDIV    R0, R7, R3          @ GPSET number
     MUL     R1, R0, R3          @ compute remainder
@@ -169,7 +170,7 @@ case_1:
     LSL     R0, R0, #2          @ 4 bytes in a register
     ADD     R0, R0, R4          @ address of GPSETn
 
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin function register in programming memory
     LDR     R2, [R0]        @ get entire register
     MOV     R3, #pinbit     @ one pin
     LSL     R3, R3, R1      @ shift to pin position
@@ -188,7 +189,7 @@ case_2:
     ADD     R4, R0, #GPSET0     @ point to GPSET regs in R4
     MOV     R5, R1              @ save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPSET register and pin field        
     MOV     R3, #registerpins   @ divisor
     UDIV    R0, R5, R3          @ GPSET number
     MUL     R1, R0, R3          @ compute remainder
@@ -196,7 +197,7 @@ case_2:
     LSL     R0, R0, #2          @ 4 bytes in a register
     ADD     R0, R0, R4          @ address of GPSETn
 
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin function register in programming memory
     LDR     R2, [R0]        @ get entire register
     MOV     R3, #pinbit     @ one pin
     LSL     R3, R3, R1      @ shift to pin position
@@ -212,18 +213,18 @@ case_3:
     @ Turn off green LED
     MOV     R0, R9			@ get gpio mapped address
     MOV     R1, #green_led	@ get pin number of green LED
-    ADD     R4, R0, #GPCLR0	@ pointer to GPSET regs.
+    ADD     R4, R0, #GPCLR0	@ pointer to GPCLR regs.
     MOV     R5, R1			@ save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPCLR register and pin field        
     MOV     R3, #registerpins	@ divisor
-    UDIV    R0, R5, R3          @ GPSET number
+    UDIV    R0, R5, R3          @ GPCLR number
     MUL     R1, R0, R3          @ compute remainder
     SUB     R1, R5, R1          @ for relative pin position
     LSL     R0, R0, #2          @ 4 bytes in a register
-    ADD     R0, R0, R4          @ address of GPSETn
+    ADD     R0, R0, R4          @ address of GPCLRn
 
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin function register in programming memory
     LDR     R2, [R0]         @ get entire register
     MOV     R3, #pinbit      @ one pin
     LSL     R3, R3, R1       @ shift to pin position
@@ -231,26 +232,26 @@ case_3:
     STR     R2, [R0]         @ update register
 
 
-	@ Turn off red LED
+    @ Turn off red LED
     MOV     R0, R9			@ get gpio mapped address
     MOV     R1, #red_led	@ get pin number of red LED
-    ADD     R4, R0, #GPCLR0	@ pointer to GPSET regs.
-    MOV     R5, R1			@ save pin number
+    ADD     R4, R0, #GPCLR0	@ pointer to GPCLR regs.
+    MOV     R7, R1			@ save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPCLR register and pin field        
     MOV     R3, #registerpins   @ divisor
-    UDIV    R0, R5, R3          @ GPSET number
+    UDIV    R0, R7, R3          @ GPCLR number
     MUL     R1, R0, R3          @ compute remainder
-    SUB     R1, R5, R1          @ for relative pin position
+    SUB     R1, R7, R1          @ for relative pin position
     LSL     R0, R0, #2          @ 4 bytes in a register
-    ADD     R0, R0, R4          @ address of GPSETn
+    ADD     R0, R0, R4          @ address of GPCLRn
 
-	@ Set up the gpio pin funtion register in programming memory
-    LDR		R2, [R0]		@ get entire register
+    @ Set up the gpio pin function register in programming memory
+    LDR     R2, [R0]        @ get entire register
     MOV     R3, #pinbit		@ one pin
     LSL     R3, R3, R1		@ shift to pin position
     ORR     R2, R2, R3		@ clear bit
-    STR     R2, [R0]		@ update register
+    STR     R3, [R0]		@ update register
 
     B LOOP @ branch back and re-run the loop
 
@@ -259,18 +260,18 @@ case_0:
     @ Turn off green LED
     MOV     R0, R9			@ get gpio mapped address
     MOV     R1, #green_led	@ get pin number of green LED
-    ADD     R4, R0, #GPCLR0	@ pointer to GPSET regs.
+    ADD     R4, R0, #GPCLR0	@ pointer to GPCLR regs.
     MOV     R5, R1			@ save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPCLR register and pin field        
     MOV     R3, #registerpins	@ divisor
-    UDIV    R0, R5, R3          @ GPSET number
+    UDIV    R0, R5, R3          @ GPCLR number
     MUL     R1, R0, R3          @ compute remainder
     SUB     R1, R5, R1          @ for relative pin position
     LSL     R0, R0, #2          @ 4 bytes in a register
-    ADD     R0, R0, R4          @ address of GPSETn
+    ADD     R0, R0, R4          @ address of GPCLRn
 
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin function register in programming memory
     LDR     R2, [R0]         @ get entire register
     MOV     R3, #pinbit      @ one pin
     LSL     R3, R3, R1       @ shift to pin position
@@ -278,26 +279,26 @@ case_0:
     STR     R2, [R0]         @ update register
 
 
-	@ Turn off red LED
+    @ Turn off red LED
     MOV     R0, R9			@ get gpio mapped address
     MOV     R1, #red_led	@ get pin number of red LED
-    ADD     R4, R0, #GPCLR0	@ pointer to GPSET regs.
-    MOV     R5, R1			@ save pin number
+    ADD     R4, R0, #GPCLR0	@ pointer to GPCLR regs.
+    MOV     R7, R1			@ save pin number
 
-	@ Compute address of GPSET register and pin field        
+    @ Compute address of GPCLR register and pin field        
     MOV     R3, #registerpins   @ divisor
-    UDIV    R0, R5, R3          @ GPSET number
+    UDIV    R0, R7, R3          @ GPCLR number
     MUL     R1, R0, R3          @ compute remainder
-    SUB     R1, R5, R1          @ for relative pin position
+    SUB     R1, R7, R1          @ for relative pin position
     LSL     R0, R0, #2          @ 4 bytes in a register
-    ADD     R0, R0, R4          @ address of GPSETn
+    ADD     R0, R0, R4          @ address of GPCLRn
 
-	@ Set up the gpio pin funtion register in programming memory
+    @ Set up the gpio pin function register in programming memory
     LDR		R2, [R0]		@ get entire register
     MOV     R3, #pinbit		@ one pin
     LSL     R3, R3, R1		@ shift to pin position
     ORR     R2, R2, R3		@ clear bit
-    STR     R2, [R0]		@ update register
+    STR     R3, [R0]		@ update register
 
     LDR R0, address_exit @ load address_exit into r0
     BL printf @ branch and link to call the function printf
@@ -329,7 +330,7 @@ map_gpio:
     B       END 
 
 set_pin:  
-    @  Select pin number of green LED and function.
+    @ Select pin number of green LED and function.
     MOV     R0, R9          @ programming memory
     MOV     R1, #green_led  @ GPIO pin number of green LED
     MOV     R2, #output     @ pin function
@@ -343,7 +344,7 @@ set_pin:
     MUL     R1, R0, R3      @ compute remainder
     SUB     R1, R5, R1      @ for GPFSEL pin    
         
-    @ Set up the GPIO pin funtion register in programming memory
+    @ Set up the GPIO pin function register in programming memory
     LSL     R0, R0, #2      @ 4 bytes in a register
     ADD     R0, R4, R0      @ GPFSELn address
     LDR     R2, [R0]        @ get entire register
@@ -372,7 +373,7 @@ set_pin:
     MUL     R1, R0, R3      @ compute remainder
     SUB     R1, R5, R1      @ for GPFSEL pin    
         
-    @ Set up the GPIO pin funtion register in programming memory
+    @ Set up the GPIO pin function register in programming memory
     LSL     R0, R0, #2      @ 4 bytes in a register
     ADD     R0, R4, R0      @ GPFSELn address
     LDR     R10, [R0]       @ get entire register
@@ -388,6 +389,7 @@ set_pin:
     STR     R10, [R0]       @ update register
     B       LOOP
 
+@ Addresses of input and input messages
 address_choice_menu : .word choice_menu
 address_choice_sel : .word choice_sel
 address_choice_pattern : .word choice_pattern
