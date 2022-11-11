@@ -23,6 +23,7 @@ int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn);
 // Global variables
 int choice = 0;
 int board[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+int botWins = 0;
 
 int main()
 {
@@ -148,7 +149,7 @@ void playSingle(int d)
 
     for (;;)
     {
-        printf("\nStart 1st or 2nd: ");
+        printf("\n=== Choose ===\n1. Player starts first\n2. Bot starts first\nEnter your choice: ");
         scanf("%d", &player);
 
         if (player == 1 || player == 2)
@@ -200,6 +201,10 @@ void playSingle(int d)
             {
                 displayBoard(board);
                 printf("\n------- BOT WINS -------\n");
+                if (d == 2)
+                {
+                    botWins++;
+                }
                 break;
             }
         }
@@ -490,14 +495,17 @@ int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn)
             {
                 board[i] = 1;
                 int tempScore = minimaxAB(board, depth + 1, alpha, beta, 0);
-                board[i] = 0; // Resets back box
+                board[i] = 0; // resets back box
                 bestScore = max(bestScore, tempScore);
                 if (bestScore >= beta)
                     break;
                 alpha = max(alpha, bestScore);
             }
         }
-        return bestScore;
+        if (botWins % 2 == 0)
+            return bestScore; // bot will win or get draw
+        else
+            return bestScore - 10; // bot does not win
     }
 
     else
@@ -510,7 +518,7 @@ int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn)
             {
                 board[i] = -1;
                 int tempScore = minimaxAB(board, depth + 1, alpha, beta, 1);
-                board[i] = 0; // Resets back box
+                board[i] = 0; // resets back box
                 bestScore = min(tempScore, bestScore);
                 if (bestScore <= alpha)
                     break;
