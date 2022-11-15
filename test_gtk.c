@@ -1,35 +1,78 @@
+/* going to use gtk3 instead since have more documentation*/
 #include <gtk/gtk.h>
+#include <stdlib.h>
 
-
-static void
-activate (GtkApplication *app,
-          gpointer        user_data)
+void single_player(GtkWidget *p_widget, gpointer user_data)
 {
-  GtkWidget *window;
-  GtkWidget *main_menu;
+    gtk_button_released(p_widget);
+    GtkWidget *p_window;
+    GtkWidget *p_v_box;
+    GtkWidget *p_entry;
 
-  window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW (window), "Tic Tac Toe");
-  gtk_window_set_default_size (GTK_WINDOW (window), 250, 250);
+    g_print("single player selected!");
 
-  main_menu = gtk_label_new("#################\n   Tic-Tac-Toe  \n#################\n=== New Game ===\n1. Single Player\n2. Two Player\n3. Exit\n");
-  gtk_label_set_justify(GTK_LABEL(main_menu), GTK_JUSTIFY_LEFT);
-  gtk_window_set_child (GTK_WINDOW (window), main_menu);
+    p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(p_window), "Single Player");
+    gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
 
-  gtk_window_present (GTK_WINDOW (window));
+    gtk_widget_show_all(p_window);
 }
 
-int
-main (int    argc,
-      char **argv)
+void two_player(GtkWidget *p_widget, gpointer user_data)
 {
-  GtkApplication *app;
-  int status;
+    gtk_button_released(p_widget);
+    GtkWidget *p_window;
+    GtkWidget *p_v_box;
+    GtkWidget *p_entry;
 
-  app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-  status = g_application_run (G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
+    g_print("two player selected!");
 
-  return status;
+    p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(p_window), "Two Player");
+    gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
+
+    gtk_widget_show_all(p_window);
+}
+
+int main_window(int argc, char **argv){
+   GtkWidget *window;
+   GtkWidget *button_1;
+   GtkWidget *button_2;
+   GtkWidget *label;
+   GtkWidget *grid;
+
+   gtk_init (&argc, &argv);
+
+   //Declaration
+   window = gtk_window_new(GTK_WINDOW_TOPLEVEL); // Create window
+   label = gtk_label_new("\n#################\n   Tic-Tac-Toe  \n#################\n=== New Game ===\n");
+   gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
+   grid = gtk_grid_new();
+   button_1 = gtk_button_new_with_label("1. Single Player");
+   button_2 = gtk_button_new_with_label("2. Two Player");
+
+   // Set Properties
+   gtk_window_set_title(GTK_WINDOW(window), "Tic Tac Toe");
+   gtk_window_set_default_size(GTK_WINDOW(window), 300, 300);
+   gtk_grid_set_row_spacing       (GTK_GRID(grid), 4);
+   gtk_grid_set_column_spacing    (GTK_GRID(grid), 4);
+   gtk_container_add              (GTK_CONTAINER(window), grid);
+
+   // Fill grid
+   gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
+   gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
+   gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
+
+   gtk_widget_show_all(window);
+
+   g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(single_player), NULL);
+   g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(two_player), NULL);
+
+   return 0;
+}
+
+int main (int argc, char *argv[]) {
+   main_window(argc, argv);
+   gtk_main ();
+   return 0;
 }
