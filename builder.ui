@@ -1,0 +1,146 @@
+<interface>
+  <object id="window" class="GtkWindow">
+    <property name="visible">True</property>
+    <property name="title">Two Player Grid</property>
+    <property name="border-width">10</property>
+    <child>
+      <object id="grid" class="GtkGrid">
+        <property name="visible">True</property>
+
+         <child>
+          <object id="turn_name" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Turn: </property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object id="turn" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">1</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="button1" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object id="button2" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="button3" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="button4" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="button5" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="button6" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        
+        <child>
+          <object id="button7" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">3</property>
+          </packing>
+        </child>
+        
+
+        <child>
+          <object id="button8" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">3</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="button9" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label"></property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">3</property>
+          </packing>
+        </child>
+
+        <child>
+          <object id="announcement" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Player X Turn</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">4</property>
+          </packing>
+        </child>
+
+      </object>
+      <packing>
+      </packing>
+    </child>
+  </object>
+</interface>
