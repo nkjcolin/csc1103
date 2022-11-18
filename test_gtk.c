@@ -22,6 +22,7 @@ void updateLabel(GtkLabel *label, int num)
 // function to update the grid when the player selects a space on the grid
 static void place_move (GtkButton *button, GtkBuilder *builder, int position)
 {
+    g_print("\n");
     GtkLabel *label = gtk_builder_get_object (builder, "turn");
     GtkLabel *a_label = gtk_builder_get_object (builder, "announcement");
     int check;
@@ -36,8 +37,8 @@ static void place_move (GtkButton *button, GtkBuilder *builder, int position)
             placeO(position);
             // check if player O win
             check = checkWin(board);
-            if (check == 1){ // if O wins
-                gtk_label_set_text (GTK_LABEL(a_label), "O WINS! You may now exit the game"); // set for the next turn which is player X
+            if (check == -1){ // if O wins
+                gtk_label_set_text (GTK_LABEL(a_label), "O WINS! You may now exit the game");
                 // reset board
                 for (int i = 0; i < 9; i++){
                     board[i] = 0;
@@ -50,11 +51,11 @@ static void place_move (GtkButton *button, GtkBuilder *builder, int position)
         } else { // else is player X turn
 
             gtk_button_set_label (button, "X");
-            placeX(position);
+            placeX(position); 
             // check if player X win
             check = checkWin(board);
-            if (check == 1){ // if O wins
-                gtk_label_set_text (GTK_LABEL(a_label), "X WINS! You may now exit the game"); // set for the next turn which is player X
+            if (check == 1){ // if X wins
+                gtk_label_set_text (GTK_LABEL(a_label), "X WINS! You may now exit the game");
                 // reset board
                 for (int i = 0; i < 9; i++){
                     board[i] = 0;
@@ -64,7 +65,6 @@ static void place_move (GtkButton *button, GtkBuilder *builder, int position)
             }
 
         }
-
         label_turn += 1;
         if (label_turn == 10){ // after user has made their final move and it is a draw, since turn starts from 1 as well
             gtk_label_set_text (GTK_LABEL(a_label), "DRAW! You may now exit the game"); 
