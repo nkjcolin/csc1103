@@ -463,6 +463,12 @@ void imp_minimax(GtkWidget *p_widget, int player)
     GObject *button_1, *button_2, *button_3, *button_4, *button_5, *button_6, *button_7, *button_8, *button_9, *label, *announcement_label;
     GError *error = NULL;
 
+    // reset board for every new game played
+    for (int i = 0; i < 9; i++)
+    {
+        board[i] = 0;
+    }
+    
     /* Construct a GtkBuilder instance and load our UI description */
 
     builder = gtk_builder_new();
@@ -622,6 +628,12 @@ void minimax(GtkWidget *p_widget, int player)
     GtkBuilder *builder;
     GObject *button_1, *button_2, *button_3, *button_4, *button_5, *button_6, *button_7, *button_8, *button_9, *label, *announcement_label;
     GError *error = NULL;
+
+    // reset board for every new game played
+    for (int i = 0; i < 9; i++)
+    {
+        board[i] = 0;
+    }
 
     /* Construct a GtkBuilder instance and load our UI description */
 
@@ -835,6 +847,12 @@ void two_player(GtkWidget *p_widget, gpointer user_data)
     GtkBuilder *builder;
     GObject *button_1, *button_2, *button_3, *button_4, *button_5, *button_6, *button_7, *button_8, *button_9, *announcement_label;
     GError *error = NULL;
+
+    // reset board for every new game played
+    for (int i = 0; i < 9; i++)
+    {
+        board[i] = 0;
+    }
 
     /* Construct a GtkBuilder instance and load our UI description */
 
