@@ -1,7 +1,7 @@
 <interface>
   <object id="window" class="GtkWindow">
     <property name="visible">True</property>
-    <property name="title">Two Player Grid</property>
+    <property name="title">Tic Tac Toe Grid</property>
     <property name="border-width">10</property>
     <child>
       <object id="grid" class="GtkGrid">
@@ -130,7 +130,7 @@
         <child>
           <object id="announcement" class="GtkLabel">
             <property name="visible">True</property>
-            <property name="label">Player X Turn</property>
+            <property name="label"></property>
           </object>
           <packing>
             <property name="left-attach">0</property>
