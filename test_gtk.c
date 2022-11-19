@@ -23,6 +23,7 @@ void updateLabel(GtkLabel *label, int num)
     g_free(display);                               // free display
 }
 
+// 2 player mode
 // function to update the grid when the player selects a space on the grid for 2 player mode
 static void place_move(GtkButton *button, GtkBuilder *builder, int position)
 {
@@ -45,7 +46,7 @@ static void place_move(GtkButton *button, GtkBuilder *builder, int position)
             check = checkWin(board);
             if (check == -1)
             { // if O wins
-                gtk_label_set_text(GTK_LABEL(a_label), "O WINS! You may now exit the game");
+                gtk_label_set_text(GTK_LABEL(a_label), "O won! You may now exit the game.");
                 // reset board
                 for (int i = 0; i < 9; i++)
                 {
@@ -54,7 +55,7 @@ static void place_move(GtkButton *button, GtkBuilder *builder, int position)
             }
             else
             {
-                gtk_label_set_text(GTK_LABEL(a_label), "Player X Turn"); // set for the next turn which is player X
+                gtk_label_set_text(GTK_LABEL(a_label), "X's turn."); // set for the next turn which is player X
             }
         }
         else
@@ -66,7 +67,7 @@ static void place_move(GtkButton *button, GtkBuilder *builder, int position)
             check = checkWin(board);
             if (check == 1)
             { // if X wins
-                gtk_label_set_text(GTK_LABEL(a_label), "X WINS! You may now exit the game");
+                gtk_label_set_text(GTK_LABEL(a_label), "X won! You may now exit the game.");
                 // reset board
                 for (int i = 0; i < 9; i++)
                 {
@@ -75,13 +76,13 @@ static void place_move(GtkButton *button, GtkBuilder *builder, int position)
             }
             else
             {
-                gtk_label_set_text(GTK_LABEL(a_label), "Player O Turn"); // set for the next turn which is player X
+                gtk_label_set_text(GTK_LABEL(a_label), "O's Turn"); // set for the next turn which is player X
             }
         }
         label_turn += 1;
         if (label_turn == 10)
         { // after user has made their final move and it is a draw, since turn starts from 1 as well
-            gtk_label_set_text(GTK_LABEL(a_label), "DRAW! You may now exit the game");
+            gtk_label_set_text(GTK_LABEL(a_label), "It's a draw! You may now exit the game");
             // reset board
             for (int i = 0; i < 9; i++)
             {
@@ -96,8 +97,8 @@ static void place_move(GtkButton *button, GtkBuilder *builder, int position)
     else
     {
         // update error message
-        gtk_label_set_text(GTK_LABEL(a_label), "Space taken! Please select another space...");
-        g_print("\nSpace taken! Please select another space...");
+        gtk_label_set_text(GTK_LABEL(a_label), "Space taken, try an empty one!");
+        g_print("\nSpace taken, try an empty one!");
     }
 }
 
@@ -183,7 +184,7 @@ static void place_move_minimax(GtkButton *button, GtkBuilder *builder, int posit
         check = checkWin(board);
         if (check == -1)
         { // if O wins
-            gtk_label_set_text(GTK_LABEL(a_label), "O WINS! You may now exit the game");
+            gtk_label_set_text(GTK_LABEL(a_label), "You won! You may now exit the game.");
             // reset board
             for (int i = 0; i < 9; i++)
             {
@@ -237,7 +238,7 @@ static void place_move_minimax(GtkButton *button, GtkBuilder *builder, int posit
             check = checkWin(board);
             if (check == 1)
             { // if X wins
-                gtk_label_set_text(GTK_LABEL(a_label), "BOT A WINS! You may now exit the game");
+                gtk_label_set_text(GTK_LABEL(a_label), "Bot A won! You may now exit the game.");
                 // reset board
                 for (int i = 0; i < 9; i++)
                 {
@@ -253,7 +254,7 @@ static void place_move_minimax(GtkButton *button, GtkBuilder *builder, int posit
                 if (label_turn >= 10)
                 {                          // after user has made their final move and it is a draw, since turn starts from 1 as well
                     updateLabel(label, 9); // for when the bot starts first
-                    gtk_label_set_text(GTK_LABEL(a_label), "DRAW! You may now exit the game");
+                    gtk_label_set_text(GTK_LABEL(a_label), "It's a draw! You may now exit the game.");
                     // reset board
                     for (int i = 0; i < 9; i++)
                     {
@@ -263,7 +264,7 @@ static void place_move_minimax(GtkButton *button, GtkBuilder *builder, int posit
                 else
                 { // if game has not end
                     updateLabel(label, label_turn);
-                    gtk_label_set_text(GTK_LABEL(a_label), "Bot A has made their move, Player O please make your move"); // set for the next turn after the bot has made their move
+                    gtk_label_set_text(GTK_LABEL(a_label), "It's your turn."); // set for the next turn after the bot has made their move
                 }
             }
         }
@@ -271,8 +272,8 @@ static void place_move_minimax(GtkButton *button, GtkBuilder *builder, int posit
     else
     {
         // update error message
-        gtk_label_set_text(GTK_LABEL(a_label), "Space taken! Please select another space...");
-        g_print("\nSpace taken! Please select another space...");
+        gtk_label_set_text(GTK_LABEL(a_label), "Space taken, try an empty one!");
+        g_print("\nSpace taken, try an empty one!");
     }
 }
 
@@ -311,7 +312,7 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
         check = checkWin(board);
         if (check == -1)
         { // if O wins
-            gtk_label_set_text(GTK_LABEL(a_label), "O WINS! You may now exit the game");
+            gtk_label_set_text(GTK_LABEL(a_label), "You won! You may now exit the game.");
             // reset board
             for (int i = 0; i < 9; i++)
             {
@@ -365,7 +366,7 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
             check = checkWin(board);
             if (check == 1)
             { // if X wins
-                gtk_label_set_text(GTK_LABEL(a_label), "BOT B WINS! You may now exit the game");
+                gtk_label_set_text(GTK_LABEL(a_label), "Bot B won! You may now exit the game.");
                 // reset board
                 for (int i = 0; i < 9; i++)
                 {
@@ -381,7 +382,7 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
                 if (label_turn >= 10)
                 {                          // after user has made their final move and it is a draw, since turn starts from 1 as well
                     updateLabel(label, 9); // for when the bot starts first
-                    gtk_label_set_text(GTK_LABEL(a_label), "DRAW! You may now exit the game");
+                    gtk_label_set_text(GTK_LABEL(a_label), "It's a draw! You may now exit the game");
                     // reset board
                     for (int i = 0; i < 9; i++)
                     {
@@ -391,7 +392,7 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
                 else
                 { // if game has not end
                     updateLabel(label, label_turn);
-                    gtk_label_set_text(GTK_LABEL(a_label), "Bot B has made their move, Player O please make your move"); // set for the next turn after the bot has made their move
+                    gtk_label_set_text(GTK_LABEL(a_label), "It's your turn."); // set for the next turn after the bot has made their move
                 }
             }
         }
@@ -399,8 +400,8 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
     else
     {
         // update error message
-        gtk_label_set_text(GTK_LABEL(a_label), "Space taken! Please select another space...");
-        g_print("\nSpace taken! Please select another space...");
+        gtk_label_set_text(GTK_LABEL(a_label), "Space taken, try an empty one!");
+        g_print("\nSpace taken, try an empty one!");
     }
 }
 
@@ -540,11 +541,11 @@ void imp_minimax(GtkWidget *p_widget, int player)
         int label_turn = atoi(gtk_label_get_text(label));
         label_turn += 1;
         updateLabel(label, label_turn);
-        gtk_label_set_text(GTK_LABEL(announcement_label), "Bot B has made their move, Player O please make your move"); // set for the next turn after the bot has made their move
+        gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn."); // set for the next turn after the bot has made their move
     }
     else if (player == 2)
     {
-        gtk_label_set_text(GTK_LABEL(announcement_label), "Player O please make your move");
+        gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn.");
     }
 
     // button is clicked, check with update_button (pass in label, placement and error)
@@ -700,11 +701,11 @@ void minimax(GtkWidget *p_widget, int player)
         int label_turn = atoi(gtk_label_get_text(label));
         label_turn += 1;
         updateLabel(label, label_turn);
-        gtk_label_set_text(GTK_LABEL(announcement_label), "Bot A has made their move, Player O please make your move"); // set for the next turn after the bot has made their move
+        gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn."); // set for the next turn after the bot has made their move
     }
     else if (player == 2)
     {
-        gtk_label_set_text(GTK_LABEL(announcement_label), "Player O please make your move");
+        gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn");
     }
 
     // button is clicked, check with update_button (pass in label, placement and error)
@@ -729,18 +730,18 @@ void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
     gtk_button_released(p_widget);
     GtkWidget *p_window, *label, *grid, *button_1, *button_2;
 
-    g_print("minimax selected!\n");
+    g_print("Imperfect minimax selected!\n");
 
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    label = gtk_label_new("\nAI: X \t You: O\n=== Choose ===");
+    label = gtk_label_new("\nBot: X \t You: O\n=== Who goes first? ===");
     gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
     grid = gtk_grid_new();
-    button_1 = gtk_button_new_with_label("1. Player starts first");
-    button_2 = gtk_button_new_with_label("2. Bot starts first");
+    button_1 = gtk_button_new_with_label("You");
+    button_2 = gtk_button_new_with_label("Bot B");
 
     // properties
-    gtk_window_set_title(GTK_WINDOW(p_window), "Single Player - Imperfect Minimax");
+    gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot B (Imperfect minimax)");
     gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
     gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
@@ -762,18 +763,18 @@ void minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
     gtk_button_released(p_widget);
     GtkWidget *p_window, *label, *grid, *button_1, *button_2;
 
-    g_print("minimax selected!\n");
+    g_print("Minimax selected!\n");
 
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    label = gtk_label_new("\nAI: X \t You: O\n=== Choose ===");
+    label = gtk_label_new("\nBot: X \t You: O\n=== Who goes first? ===");
     gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
     grid = gtk_grid_new();
-    button_1 = gtk_button_new_with_label("1. Player starts first");
-    button_2 = gtk_button_new_with_label("2. Bot starts first");
+    button_1 = gtk_button_new_with_label("You");
+    button_2 = gtk_button_new_with_label("Bot A");
 
     // properties
-    gtk_window_set_title(GTK_WINDOW(p_window), "Single Player - Minimax");
+    gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot A (Minimax)");
     gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
     gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
@@ -795,18 +796,18 @@ void single_player(GtkWidget *p_widget, gpointer user_data)
     gtk_button_released(p_widget);
     GtkWidget *p_window, *label, *grid, *button_1, *button_2;
 
-    g_print("single player selected!\n");
+    g_print("You vs Bot selected!\n");
 
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     label = gtk_label_new("=== Opponents ===");
     gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
     grid = gtk_grid_new();
-    button_1 = gtk_button_new_with_label("1. Bot A (minimax)");
-    button_2 = gtk_button_new_with_label("2. Bot B (imperfect minimax)");
+    button_1 = gtk_button_new_with_label("Bot A (minimax)");
+    button_2 = gtk_button_new_with_label("Bot B (imperfect minimax)");
 
     // properties
-    gtk_window_set_title(GTK_WINDOW(p_window), "Single Player");
+    gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot");
     gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
     gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
     gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
@@ -845,7 +846,7 @@ void two_player(GtkWidget *p_widget, gpointer user_data)
         return 1;
     }
 
-    g_print("\ntwo player selected!\n");
+    g_print("\nYou vs Friend selected!\n");
 
     // p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     // gtk_window_set_title(GTK_WINDOW(p_window), "Two Player");
@@ -867,7 +868,7 @@ void two_player(GtkWidget *p_widget, gpointer user_data)
 
     // Set label
     announcement_label = gtk_builder_get_object(builder, "announcement");
-    gtk_label_set_text(GTK_LABEL(announcement_label), "Player X Turn");
+    gtk_label_set_text(GTK_LABEL(announcement_label), "X's Turn");
 
     // button is clicked, check with update_button (pass in label, placement and error)
     g_signal_connect(button_1, "clicked", G_CALLBACK(position_1), builder);
@@ -898,11 +899,11 @@ int main_window(int argc, char **argv)
 
     // Declaration
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL); // Create window
-    label = gtk_label_new("\n#################\n   Tic-Tac-Toe  \n#################\n=== New Game ===\n");
+    label = gtk_label_new("\n   Tic-Tac-Toe  \n\n=== New Game ===\n");
     gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
     grid = gtk_grid_new();
-    button_1 = gtk_button_new_with_label("1. Single Player");
-    button_2 = gtk_button_new_with_label("2. Two Player");
+    button_1 = gtk_button_new_with_label("You vs Bot");
+    button_2 = gtk_button_new_with_label("You vs Friend");
 
     // Set Properties
     gtk_window_set_title(GTK_WINDOW(window), "Tic Tac Toe");
