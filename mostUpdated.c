@@ -820,28 +820,19 @@ void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
         break;
     }
 
-    //gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
-    //grid = gtk_grid_new();
-    //button_1 = gtk_button_new_with_label("You");
-    //button_2 = gtk_button_new_with_label("Bot B");
-
     // properties
     gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot B (Imperfect minimax)");
     gtk_window_set_default_size(GTK_WINDOW(p_window), 100, 100);
-    //gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
-    //gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
-    //gtk_container_add(GTK_CONTAINER(p_window), grid);
+    gtk_window_set_resizable(GTK_WINDOW(p_window), FALSE);
+
     g_signal_connect (G_OBJECT (p_window), "destroy",
 		    G_CALLBACK (gtk_main_quit),
 		    NULL);
     gtk_container_set_border_width (GTK_CONTAINER (p_window), 100);
 
-    // Fill grid
-    //gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
-    //gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
-    //gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
     main_vbox = gtk_vbox_new (FALSE, 100);
     gtk_container_add (GTK_CONTAINER (p_window), main_vbox);
+    
     hbox = gtk_hbox_new (FALSE, 100);
     gtk_container_set_border_width (GTK_CONTAINER (hbox), 10);
     gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
@@ -854,11 +845,8 @@ void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
     gtk_widget_show_all(p_window);
 
-    //ga_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(imp_minimax), 1);
-    //g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(imp_minimax), 2);
 }
 
-/*min_max*/
 /* Create a Button Box with the specified parameters */
 static GtkWidget *create_bbox_minMax( gint  horizontal,
                                char *title,
@@ -887,7 +875,7 @@ static GtkWidget *create_bbox_minMax( gint  horizontal,
   /* Set the appearance of the Button Box */
   gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), layout);
   gtk_box_set_spacing (GTK_BOX (bbox), spacing);
-  /*gtk_button_box_set_child_size (GTK_BUTTON_BOX (bbox), child_w, child_h);*/
+
 
   button_1 = gtk_button_new_with_label("You");
   gtk_container_add (GTK_CONTAINER (bbox), button_1);
@@ -914,28 +902,19 @@ void minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    //label = gtk_label_new("\nBot: X \t You: O\n=== Who goes first? ===");
-    //gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
-    //grid = gtk_grid_new();
-    //button_1 = gtk_button_new_with_label("You");
-    //button_2 = gtk_button_new_with_label("Bot A");
+
 
     // properties
     gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot A (Minimax)");
     gtk_window_set_default_size(GTK_WINDOW(p_window), 100, 100);
-    //gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
-    //gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
-    //gtk_container_add(GTK_CONTAINER(p_window), grid);
+    gtk_window_set_resizable(GTK_WINDOW(p_window), FALSE);
+    
     g_signal_connect (G_OBJECT (p_window), "destroy",
 		    G_CALLBACK (gtk_main_quit),
 		    NULL);
     gtk_container_set_border_width (GTK_CONTAINER (p_window), 100);        
 
-    // Fill grid
-    //gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
-    //gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
-    //gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
-    //allows the 2 frame to appear
+  
     main_vbox = gtk_vbox_new (FALSE, 100);
     gtk_container_add (GTK_CONTAINER (p_window), main_vbox);
  
@@ -951,6 +930,7 @@ void minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
 }
 
+//Single Player Mode
 /* Create a Button Box with the specified parameters */
 static GtkWidget *create_bbox_single( gint  horizontal,
                                char *title,
@@ -979,7 +959,6 @@ static GtkWidget *create_bbox_single( gint  horizontal,
   /* Set the appearance of the Button Box */
   gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), layout);
   gtk_box_set_spacing (GTK_BOX (bbox), spacing);
-  /*gtk_button_box_set_child_size (GTK_BUTTON_BOX (bbox), child_w, child_h);*/
 
   button_1 = gtk_button_new_with_label("Bot A (minimax)");
   gtk_container_add (GTK_CONTAINER (bbox), button_1);
@@ -1006,18 +985,12 @@ void single_player(GtkWidget *p_widget, gpointer user_data)
 
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    //label = gtk_label_new("=== Opponents ===");
-    //gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
-    //grid = gtk_grid_new();
-    //button_1 = gtk_button_new_with_label("Bot A (minimax)");
-    //button_2 = gtk_button_new_with_label("Bot B (imperfect minimax)");
-
+   
     // properties
     gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot");
     gtk_window_set_default_size(GTK_WINDOW(p_window), 100, 100);
-    //gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
-    //gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
-    //gtk_container_add(GTK_CONTAINER(p_window), grid);
+    gtk_window_set_resizable(GTK_WINDOW(p_window), FALSE);
+   ;
     g_signal_connect (G_OBJECT (p_window), "destroy",
 		    G_CALLBACK (gtk_main_quit),
 		    NULL);
@@ -1037,14 +1010,8 @@ void single_player(GtkWidget *p_widget, gpointer user_data)
            create_bbox_single (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
 		       TRUE, TRUE, 50);
 
-    // Fill grid
-    //gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
-    //gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
-    //gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
-
     gtk_widget_show_all(p_window);
 }
-
 // Two player mode
 
 void two_player(GtkWidget *p_widget, gpointer user_data)
@@ -1075,9 +1042,7 @@ void two_player(GtkWidget *p_widget, gpointer user_data)
 
     g_print("\nYou vs Friend selected!\n");
 
-    // p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    // gtk_window_set_title(GTK_WINDOW(p_window), "Two Player");
-    // gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
+
 
     p_window = gtk_builder_get_object(builder, "window");
     // g_signal_connect (p_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
@@ -1135,15 +1100,14 @@ static GtkWidget *create_bbox( gint  horizontal,
     bbox = gtk_hbutton_box_new ();
   else
     bbox = gtk_vbutton_box_new ();
-  //Increase the frame of the button box but not the widtth
+
   gtk_container_set_border_width (GTK_CONTAINER (bbox), 50);
   gtk_container_add (GTK_CONTAINER (frame), bbox);
 
   /* Set the appearance of the Button Box */
   gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), layout);
   gtk_box_set_spacing (GTK_BOX (bbox), spacing);
-  /*gtk_button_box_set_child_size (GTK_BUTTON_BOX (bbox), child_w, child_h);*/
-
+ 
   button_1 = gtk_button_new_with_label("You vs Bot");
   gtk_container_add (GTK_CONTAINER (bbox), button_1);
 
@@ -1172,8 +1136,7 @@ int main_window(int argc, char **argv)
     
     gtk_window_set_title(GTK_WINDOW(window), "Tic Tac Toe");
     gtk_window_set_default_size(GTK_WINDOW(window), 100, 100);
-    
- 
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
     g_signal_connect (G_OBJECT (window), "destroy",
 		    G_CALLBACK (gtk_main_quit),
