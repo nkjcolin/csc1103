@@ -10,10 +10,13 @@
 int checkWin(int board[9]);
 void placeX(int a);
 void placeO(int b);
+int levelDifficulty(float botWins, float gamesPlayed);
 
 // Global Variables
 int board[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 int player = 0;
+float gamesPlayed = 0;
+float botWins = 0;
 
 void updateLabel(GtkLabel *label, int num)
 {
@@ -313,6 +316,7 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
         if (check == -1)
         { // if O wins
             gtk_label_set_text(GTK_LABEL(a_label), "You won! You may now exit the game.");
+            gamesPlayed++;
             // reset board
             for (int i = 0; i < 9; i++)
             {
@@ -367,6 +371,8 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
             if (check == 1)
             { // if X wins
                 gtk_label_set_text(GTK_LABEL(a_label), "Bot B won! You may now exit the game.");
+                gamesPlayed++;
+                botWins++;
                 // reset board
                 for (int i = 0; i < 9; i++)
                 {
@@ -383,6 +389,8 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
                 {                          // after user has made their final move and it is a draw, since turn starts from 1 as well
                     updateLabel(label, 9); // for when the bot starts first
                     gtk_label_set_text(GTK_LABEL(a_label), "It's a draw! You may now exit the game");
+                    gamesPlayed++;
+                    botWins += 0.5;
                     // reset board
                     for (int i = 0; i < 9; i++)
                     {
@@ -468,7 +476,7 @@ void imp_minimax(GtkWidget *p_widget, int player)
     {
         board[i] = 0;
     }
-    
+
     /* Construct a GtkBuilder instance and load our UI description */
 
     builder = gtk_builder_new();
@@ -744,9 +752,27 @@ void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
     g_print("Imperfect minimax selected!\n");
 
+    int difficulty = levelDifficulty(botWins, gamesPlayed);
+
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    label = gtk_label_new("\nBot: X \t You: O\n=== Who goes first? ===");
+
+    switch (difficulty)
+    {
+    case 0:
+        label = gtk_label_new("\nBot: X \t You: O\n=== Who goes first? ===");
+        break;
+    case 1:
+        label = gtk_label_new("\nDificulty: Easy\nBot: X \t You: O\n=== Who goes first? ===");
+        break;
+    case 2:
+        label = gtk_label_new("\nDificulty: Intermediate\nBot: X \t You: O\n=== Who goes first? ===");
+        break;
+    case 3:
+        label = gtk_label_new("\nDificulty: Hard\nBot: X \t You: O\n=== Who goes first? ===");
+        break;
+    }
+
     gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
     grid = gtk_grid_new();
     button_1 = gtk_button_new_with_label("You");
@@ -1117,7 +1143,6 @@ int min(int a, int b)
     return a < b ? a : b;
 }
 
-/*=========================================================================================*/
 // minimax using alpha-beta pruning (fail-hard)
 int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn)
 {
@@ -1212,4 +1237,29 @@ int moveAB(int board[9]) // update to return position of where to put the move
     }
     board[move] = 1;
     return move;
+}
+
+int levelDifficulty(float botWins, float gamesPlayed)
+{
+    // if draw botWins + 0.5, if bot wins botWins + 1
+    float difficulty = botWins / gamesPlayed;
+    if (gamesPlayed != 0) // played at least 1 game
+    {
+        if (difficulty > 0.6)
+        {
+            // Difficulty: Hard
+            return 3;
+        }
+        else if (difficulty > 0.4)
+        {
+            // Difficulty: Intermediate
+            return 2;
+        }
+        else
+        {
+            // Difficulty: Easy
+            return 1;
+        }
+    }
+    return 0;
 }

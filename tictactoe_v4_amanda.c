@@ -19,7 +19,7 @@ int movesLeft(int board[9]);
 void displayBoard(int board[9]);
 int miniMax(int board[9], int depth, int maxTurn);
 int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn);
-void levelDifficultuy(float botWins, float gamesPlayed);
+void levelDifficulty(float botWins, float gamesPlayed);
 
 // Global variables
 int choice = 0;
@@ -150,7 +150,7 @@ void playSingle(int d)
 
     // Difficulty (part 4c)
     if (d == 2)
-        levelDifficultuy(botWins, gamesPlayed);
+        levelDifficulty(botWins, gamesPlayed);
     // AI plays as X = 1, player plays as -1.
     printf("\nAI: X \t You: O");
 
@@ -575,7 +575,7 @@ void moveAB(int board[9])
 }
 
 // Gauge level of difficulty of imperfect minimax
-void levelDifficultuy(float botWins, float gamesPlayed)
+void levelDifficulty(float botWins, float gamesPlayed)
 {
     // if draw botWins + 0.5, if bot wins botWins + 1
     float difficulty = botWins / gamesPlayed;
