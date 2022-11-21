@@ -560,12 +560,10 @@ void imp_minimax(GtkWidget *p_widget, int player)
         int label_turn = atoi(gtk_label_get_text(label));
         label_turn += 1;
         updateLabel(label, label_turn);
-        gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn."); // set for the next turn after the bot has made their move
+
     }
-    else if (player == 2)
-    {
-        gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn.");
-    }
+
+    gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn.");
 
     // button is clicked, check with update_button (pass in label, placement and error)
     g_signal_connect(button_1, "clicked", G_CALLBACK(position_1_imp_minimax), builder);
