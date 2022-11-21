@@ -156,7 +156,6 @@
 
       </object>
       <packing>
-        <property name="fill">True</property>
       </packing>
     </child>
   </object>

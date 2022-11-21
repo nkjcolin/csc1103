@@ -10,6 +10,13 @@
 int checkWin(int board[9]);
 void placeX(int a);
 void placeO(int b);
+int max(int a, int b);
+int min(int a, int b);
+int AImove(int board[9]);
+int moveAB(int board[9]);
+int movesLeft(int board[9]);
+int miniMax(int board[9], int depth, int maxTurn);
+int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn);
 int levelDifficulty(float botWins, float gamesPlayed);
 
 // Global Variables
@@ -198,7 +205,6 @@ static void place_move_minimax(GtkButton *button, GtkBuilder *builder, int posit
         {
             // let AI make the play first
             int move = AImove(board) + 1;
-            g_print("%d", move);
 
             if (move == 1)
             {
@@ -327,7 +333,6 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
         {
             // let AI make the play first
             int move = moveAB(board) + 1;
-            g_print("%d", move);
 
             if (move == 1)
             {
@@ -486,7 +491,7 @@ void imp_minimax(GtkWidget *p_widget, int player)
         g_clear_error(&error);
     }
 
-    g_print("\nsingle player minimax gameplay\n");
+    g_print("\nSingle Player Imperfect Minimax Gameplay\n");
 
     p_window = gtk_builder_get_object(builder, "window");
     // g_signal_connect (p_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
@@ -652,7 +657,7 @@ void minimax(GtkWidget *p_widget, int player)
         g_clear_error(&error);
     }
 
-    g_print("\nsingle player minimax gameplay\n");
+    g_print("\nSingle Player Minimax Gameplay\n");
 
     p_window = gtk_builder_get_object(builder, "window");
     // g_signal_connect (p_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
@@ -678,7 +683,6 @@ void minimax(GtkWidget *p_widget, int player)
 
         // let AI make the play first
         int move = AImove(board) + 1;
-        g_print("%d", move);
 
         if (move == 1)
         {
@@ -743,121 +747,259 @@ void minimax(GtkWidget *p_widget, int player)
     gtk_widget_show_all(p_window);
 }
 
-void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
+/* Create a Button Box with the specified parameters - Imperfect Minimax Select Player */
+static GtkWidget *create_bbox_Imp_MinMax( gint  horizontal,
+                               char *title,
+                               gint  spacing,
+                               gint  child_w,
+                               gint  child_h,
+                               gint  layout )
 {
-    gtk_button_released(p_widget);
-    GtkWidget *p_window, *label, *grid, *button_1, *button_2;
+  GtkWidget *frame;
+  GtkWidget *bbox;
+  GtkWidget *button_1;
+  GtkWidget *button_2;
 
-    g_print("Imperfect minimax selected!\n");
+    frame = gtk_frame_new ("");
 
     int difficulty = levelDifficulty(botWins, gamesPlayed);
-
-    // Declaration
-    p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     switch (difficulty)
     {
     case 0:
-        label = gtk_label_new("\nBot: X \t You: O\n=== Who goes first? ===");
+        gtk_frame_set_label (frame,"\nBot: X \t You: O\n=== Who goes first? ===");
         break;
     case 1:
-        label = gtk_label_new("\nDificulty: Easy\nBot: X \t You: O\n=== Who goes first? ===");
+        gtk_frame_set_label (frame,"\nDificulty: Easy\nBot: X \t You: O\n=== Who goes first? ===");
         break;
     case 2:
-        label = gtk_label_new("\nDificulty: Intermediate\nBot: X \t You: O\n=== Who goes first? ===");
+        gtk_frame_set_label (frame,"\nDificulty: Intermediate\nBot: X \t You: O\n=== Who goes first? ===");
         break;
     case 3:
-        label = gtk_label_new("\nDificulty: Hard\nBot: X \t You: O\n=== Who goes first? ===");
+        gtk_frame_set_label (frame,"\nDificulty: Hard\nBot: X \t You: O\n=== Who goes first? ===");
         break;
     }
 
-    gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
-    grid = gtk_grid_new();
+    gtk_frame_set_label_align (frame, 0.5,1);
+
+    if (horizontal)
+      bbox = gtk_hbutton_box_new ();
+    else
+      bbox = gtk_vbutton_box_new ();
+
+    gtk_container_set_border_width (GTK_CONTAINER (bbox), 50);
+    gtk_container_add (GTK_CONTAINER (frame), bbox);
+
+    /* Set the appearance of the Button Box */
+    gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), layout);
+    gtk_box_set_spacing (GTK_BOX (bbox), spacing);
+    /*gtk_button_box_set_child_size (GTK_BUTTON_BOX (bbox), child_w, child_h);*/
+
     button_1 = gtk_button_new_with_label("You");
+    gtk_container_add (GTK_CONTAINER (bbox), button_1);
+
     button_2 = gtk_button_new_with_label("Bot B");
+    gtk_container_add (GTK_CONTAINER (bbox), button_2);
+    
+    g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(imp_minimax), 1);
+    g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(imp_minimax), 2);
+
+    return frame;
+}
+
+void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
+{
+    GtkWidget *main_vbox;
+    GtkWidget *vbox;
+    GtkWidget *hbox;
+    GtkWidget *label;
+    GtkWidget *p_window;
+    gtk_button_released(p_widget);
+
+
+    g_print("\nImperfect Minimax Selected!\n");
+
+    // Declaration
+    p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     // properties
     gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot B (Imperfect minimax)");
-    gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
-    gtk_container_add(GTK_CONTAINER(p_window), grid);
+    gtk_window_set_default_size(GTK_WINDOW(p_window), 100, 100);
+    gtk_window_set_resizable(GTK_WINDOW(p_window), FALSE);
 
-    // Fill grid
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
+    gtk_container_set_border_width (GTK_CONTAINER (p_window), 100);
+
+    main_vbox = gtk_vbox_new (FALSE, 100);
+    gtk_container_add (GTK_CONTAINER (p_window), main_vbox);
+    
+    hbox = gtk_hbox_new (FALSE, 100);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox), 10);
+    gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
+
+
+    gtk_box_pack_start (GTK_BOX (hbox),
+           create_bbox_Imp_MinMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+		       TRUE, TRUE, 50);
+
 
     gtk_widget_show_all(p_window);
+}
 
-    g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(imp_minimax), 1);
-    g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(imp_minimax), 2);
+/* Create a Button Box with the specified parameters - Minimax Select Player */
+static GtkWidget *create_bbox_minMax( gint  horizontal,
+                               char *title,
+                               gint  spacing,
+                               gint  child_w,
+                               gint  child_h,
+                               gint  layout )
+{
+  GtkWidget *frame;
+  GtkWidget *bbox;
+  GtkWidget *button_1;
+  GtkWidget *button_2;
+
+  frame = gtk_frame_new ("");
+  gtk_frame_set_label (frame,"\nBot: X \t You: O\n=== Who goes first? ===");
+  gtk_frame_set_label_align (frame, 0.5,1);
+
+  if (horizontal)
+    bbox = gtk_hbutton_box_new ();
+  else
+    bbox = gtk_vbutton_box_new ();
+
+  gtk_container_set_border_width (GTK_CONTAINER (bbox), 50);
+  gtk_container_add (GTK_CONTAINER (frame), bbox);
+
+  /* Set the appearance of the Button Box */
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), layout);
+  gtk_box_set_spacing (GTK_BOX (bbox), spacing);
+
+
+  button_1 = gtk_button_new_with_label("You");
+  gtk_container_add (GTK_CONTAINER (bbox), button_1);
+
+  button_2 = gtk_button_new_with_label("Bot A");
+  gtk_container_add (GTK_CONTAINER (bbox), button_2);
+  
+  g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(minimax), 1);
+  g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(minimax), 2);
+
+  return frame;
 }
 
 void minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 {
     gtk_button_released(p_widget);
-    GtkWidget *p_window, *label, *grid, *button_1, *button_2;
+    GtkWidget *p_window;
+    GtkWidget *main_vbox;
+    GtkWidget *vbox;
+    GtkWidget *hbox;
+    GtkWidget *label;
 
-    g_print("Minimax selected!\n");
+    g_print("\nMinimax Selected!\n");
 
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    label = gtk_label_new("\nBot: X \t You: O\n=== Who goes first? ===");
-    gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
-    grid = gtk_grid_new();
-    button_1 = gtk_button_new_with_label("You");
-    button_2 = gtk_button_new_with_label("Bot A");
 
     // properties
     gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot A (Minimax)");
-    gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
-    gtk_container_add(GTK_CONTAINER(p_window), grid);
+    gtk_window_set_default_size(GTK_WINDOW(p_window), 100, 100);
+    gtk_window_set_resizable(GTK_WINDOW(p_window), FALSE);
+    
+    gtk_container_set_border_width (GTK_CONTAINER (p_window), 100);        
 
-    // Fill grid
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
+  
+    main_vbox = gtk_vbox_new (FALSE, 100);
+    gtk_container_add (GTK_CONTAINER (p_window), main_vbox);
+ 
+    hbox = gtk_hbox_new (FALSE, 100);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox), 10);
+    gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
 
+
+    gtk_box_pack_start (GTK_BOX (hbox),
+           create_bbox_minMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+		       TRUE, TRUE, 50);
     gtk_widget_show_all(p_window);
 
-    g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(minimax), 1);
-    g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(minimax), 2);
+}
+
+/* Create a Button Box with the specified parameters - Single PLayer*/
+static GtkWidget *create_bbox_single( gint  horizontal,
+                               char *title,
+                               gint  spacing,
+                               gint  child_w,
+                               gint  child_h,
+                               gint  layout )
+{
+  GtkWidget *frame;
+  GtkWidget *bbox;
+  GtkWidget *button_1;
+  GtkWidget *button_2;
+
+  frame = gtk_frame_new (" ");
+  gtk_frame_set_label (frame,"\n=== Opponents ===\n");
+  gtk_frame_set_label_align (frame, 0.5,1);
+
+  if (horizontal)
+    bbox = gtk_hbutton_box_new ();
+  else
+    bbox = gtk_vbutton_box_new ();
+
+  gtk_container_set_border_width (GTK_CONTAINER (bbox), 50);
+  gtk_container_add (GTK_CONTAINER (frame), bbox);
+
+  /* Set the appearance of the Button Box */
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), layout);
+  gtk_box_set_spacing (GTK_BOX (bbox), spacing);
+
+  button_1 = gtk_button_new_with_label("Bot A (minimax)");
+  gtk_container_add (GTK_CONTAINER (bbox), button_1);
+
+  button_2 = gtk_button_new_with_label("Bot B (imperfect minimax)");
+  gtk_container_add (GTK_CONTAINER (bbox), button_2);
+  
+  g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(minimax_selectplayer), NULL);
+  g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(imp_minimax_selectplayer), NULL);
+
+  return frame;
 }
 
 void single_player(GtkWidget *p_widget, gpointer user_data)
 {
+    GtkWidget *main_vbox;
+    GtkWidget *vbox;
+    GtkWidget *hbox;
+    GtkWidget *label;
+    GtkWidget *p_window;
     gtk_button_released(p_widget);
-    GtkWidget *p_window, *label, *grid, *button_1, *button_2;
 
-    g_print("You vs Bot selected!\n");
+    g_print("\nYou vs Bot selected!\n");
 
     // Declaration
     p_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    label = gtk_label_new("=== Opponents ===");
-    gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
-    grid = gtk_grid_new();
-    button_1 = gtk_button_new_with_label("Bot A (minimax)");
-    button_2 = gtk_button_new_with_label("Bot B (imperfect minimax)");
-
+   
     // properties
     gtk_window_set_title(GTK_WINDOW(p_window), "You vs Bot");
-    gtk_window_set_default_size(GTK_WINDOW(p_window), 300, 300);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
-    gtk_container_add(GTK_CONTAINER(p_window), grid);
+    gtk_window_set_default_size(GTK_WINDOW(p_window), 100, 100);
+    gtk_window_set_resizable(GTK_WINDOW(p_window), FALSE);
+    
+    gtk_container_set_border_width (GTK_CONTAINER (p_window), 100);
 
-    // Fill grid
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
+    //allows the 2 frame to appear
+    main_vbox = gtk_vbox_new (FALSE, 100);
+    gtk_container_add (GTK_CONTAINER (p_window), main_vbox);
+ 
+    hbox = gtk_hbox_new (FALSE, 100);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox), 10);
+    gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
+
+
+    gtk_box_pack_start (GTK_BOX (hbox),
+           create_bbox_single (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+		       TRUE, TRUE, 50);
 
     gtk_widget_show_all(p_window);
-
-    g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(minimax_selectplayer), NULL);
-    g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(imp_minimax_selectplayer), NULL);
 }
 
 // Two player mode
@@ -929,40 +1071,84 @@ void two_player(GtkWidget *p_widget, gpointer user_data)
     gtk_widget_show_all(p_window);
 }
 
+/* Create a Button Box with the specified parameters */
+static GtkWidget *create_bbox( gint  horizontal,
+                               char *title,
+                               gint  spacing,
+                               gint  child_w,
+                               gint  child_h,
+                               gint  layout )
+{
+  GtkWidget *frame;
+  GtkWidget *bbox;
+  GtkWidget *button_1;
+  GtkWidget *button_2;
+
+  frame = gtk_frame_new ("Game Menu");
+  gtk_frame_set_label (frame,"\n         Tic-Tac-Toe  \n\n=== New Game ===\n");
+  gtk_frame_set_label_align (frame, 0.5,1);
+
+  if (horizontal)
+    bbox = gtk_hbutton_box_new ();
+  else
+    bbox = gtk_vbutton_box_new ();
+
+  gtk_container_set_border_width (GTK_CONTAINER (bbox), 50);
+  gtk_container_add (GTK_CONTAINER (frame), bbox);
+
+  /* Set the appearance of the Button Box */
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (bbox), layout);
+  gtk_box_set_spacing (GTK_BOX (bbox), spacing);
+ 
+  button_1 = gtk_button_new_with_label("You vs Bot");
+  gtk_container_add (GTK_CONTAINER (bbox), button_1);
+
+  button_2 = gtk_button_new_with_label("You vs Friend");
+  gtk_container_add (GTK_CONTAINER (bbox), button_2);
+  
+  g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(single_player), NULL);
+  g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(two_player), NULL);
+
+  return frame;
+}
+
 int main_window(int argc, char **argv)
 {
-    GtkWidget *window;
-    GtkWidget *button_1;
-    GtkWidget *button_2;
+    static GtkWidget* window = NULL;
+    GtkWidget *main_vbox;
+    GtkWidget *vbox;
+    GtkWidget *hbox;
     GtkWidget *label;
-    GtkWidget *grid;
 
     gtk_init(&argc, &argv);
 
     // Declaration
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL); // Create window
-    label = gtk_label_new("\n   Tic-Tac-Toe  \n\n=== New Game ===\n");
-    gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);
-    grid = gtk_grid_new();
-    button_1 = gtk_button_new_with_label("You vs Bot");
-    button_2 = gtk_button_new_with_label("You vs Friend");
-
-    // Set Properties
+    
     gtk_window_set_title(GTK_WINDOW(window), "Tic Tac Toe");
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 300);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 4);
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 4);
-    gtk_container_add(GTK_CONTAINER(window), grid);
+    gtk_window_set_default_size(GTK_WINDOW(window), 100, 100);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
-    // Fill grid
-    gtk_grid_attach(GTK_GRID(grid), label, 1, 0, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_1, 1, 1, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_2, 1, 2, 2, 1);
+    g_signal_connect (G_OBJECT (window), "destroy",
+		    G_CALLBACK (gtk_main_quit),
+		    NULL);
 
-    gtk_widget_show_all(window);
+    gtk_container_set_border_width (GTK_CONTAINER (window), 100);
+  
+    //allows the 2 frame to appear
+    main_vbox = gtk_vbox_new (FALSE, 100);
+    gtk_container_add (GTK_CONTAINER (window), main_vbox);
+ 
+    hbox = gtk_hbox_new (FALSE, 100);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox), 10);
+    gtk_container_add (GTK_CONTAINER (main_vbox), hbox);
 
-    g_signal_connect(G_OBJECT(button_1), "clicked", G_CALLBACK(single_player), NULL);
-    g_signal_connect(G_OBJECT(button_2), "clicked", G_CALLBACK(two_player), NULL);
+
+    gtk_box_pack_start (GTK_BOX (hbox),
+           create_bbox (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+		       TRUE, TRUE, 50);
+
+    gtk_widget_show_all (window);
 
     return 0;
 }
