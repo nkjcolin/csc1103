@@ -746,7 +746,7 @@ void minimax(GtkWidget *p_widget, int player)
 }
 
 /* Create a Button Box with the specified parameters - Imperfect Minimax Select Player */
-static GtkWidget *create_bbox_Imp_MinMax( gint  horizontal,
+static GtkWidget *create_bbox_Imp_MiniMax( gint  horizontal,
                                char *title,
                                gint  spacing,
                                gint  child_w,
@@ -836,7 +836,7 @@ void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
 
     gtk_box_pack_start (GTK_BOX (hbox),
-           create_bbox_Imp_MinMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+           create_bbox_Imp_MiniMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
 		       TRUE, TRUE, 50);
 
 
@@ -844,7 +844,7 @@ void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 }
 
 /* Create a Button Box with the specified parameters - Minimax Select Player */
-static GtkWidget *create_bbox_minMax( gint  horizontal,
+static GtkWidget *create_bbox_miniMax( gint  horizontal,
                                char *title,
                                gint  spacing,
                                gint  child_w,
@@ -916,7 +916,7 @@ void minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
 
     gtk_box_pack_start (GTK_BOX (hbox),
-           create_bbox_minMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+           create_bbox_miniMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
 		       TRUE, TRUE, 50);
     gtk_widget_show_all(p_window);
 
