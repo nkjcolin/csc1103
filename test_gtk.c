@@ -1082,7 +1082,7 @@ static GtkWidget *create_bbox( gint  horizontal,
   GtkWidget *button_1;
   GtkWidget *button_2;
 
-  frame = gtk_frame_new ("Game Menu");
+  frame = gtk_frame_new (" ");
   gtk_frame_set_label (frame,"\n         Tic-Tac-Toe  \n\n=== New Game ===\n");
   gtk_frame_set_label_align (frame, 0.5,1);
 
