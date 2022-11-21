@@ -1331,61 +1331,61 @@ int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn)
     int gameState = checkWin(board);
     int checkDraw = movesLeft(board);
 
-    if (gameState == 1)
+    if (gameState == 1) // bot wins
     {
         return 10;
     }
 
-    if (gameState == -1)
+    if (gameState == -1) // player wins
     {
         return -10;
     }
-
-    if (checkDraw == 0) // Tie
+    if (checkDraw == 0) // draw
     {
         return 0;
     }
 
     if (maxTurn)
     {
-        // If maximizer's turn, get the highest score as possible recursively
+        // maximizer's turn, get the highest score recursively
         int bestScore = MIN_SCORE;
-        // Checks every row and column if empty box exists
+        // checks every row and column for empty space
         for (int i = 0; i < 9; i++)
         {
             if (board[i] == 0)
             {
-                if (depth == 2) // setting a depth limit uses less memory but it cannot travers into the tree deeper to find a more optimal result
+                if (depth == 2) // set depth limit, prevent finding optimal result
                 {
                     break;
                 }
                 board[i] = 1;
                 int tempScore = minimaxAB(board, depth + 1, alpha, beta, 0);
-                board[i] = 0; // resets back box
+                board[i] = 0; // resets space to empty
                 bestScore = max(bestScore, tempScore);
                 if (bestScore >= beta)
                     break;
                 alpha = max(alpha, bestScore);
             }
         }
-        return bestScore; // bot will win or get draw
+        return bestScore;
     }
 
     else
     {
-        // If minimizer's turn, get the lowest score as possible recursively
+        // minimizer's turn, get the lowest score recursively
         int bestScore = MAX_SCORE;
-        for (int i = 0; i < 9; i++) // Checks every row and column if empty box exists
+        // checks every row and column for empty space
+        for (int i = 0; i < 9; i++) 
         {
             if (board[i] == 0)
             {
-                if (depth == 2) // setting a depth limit uses less memory but it cannot travers into the tree deeper to find a more optimal result
+                if (depth == 2) // set depth limit, prevent finding optimal result
                 {
                     break;
                 }
                 board[i] = -1;
                 int tempScore = minimaxAB(board, depth + 1, alpha, beta, 1);
-                board[i] = 0; // resets back box
+                board[i] = 0; // resets space to empty
                 bestScore = min(tempScore, bestScore);
                 if (bestScore <= alpha)
                     break;
@@ -1396,8 +1396,9 @@ int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn)
     }
 }
 
-// next best move minimax ab pruning
-int moveAB(int board[9]) // update to return position of where to put the move
+// next best move minimax with alpha-beta pruning
+// returns position of next move
+int moveAB(int board[9]) 
 {
     printf("\nPlaying with Bot B...\n");
     int score = MIN_SCORE;
@@ -1421,9 +1422,10 @@ int moveAB(int board[9]) // update to return position of where to put the move
     return move;
 }
 
+// gauge difficulty level based on number of bot wins
 int levelDifficulty(float botWins, float gamesPlayed)
 {
-    // if draw botWins + 0.5, if bot wins botWins + 1
+    // if draw, botWins + 0.5; if bot wins, botWins + 1
     float difficulty = botWins / gamesPlayed;
     if (gamesPlayed != 0) // played at least 1 game
     {
@@ -1443,5 +1445,5 @@ int levelDifficulty(float botWins, float gamesPlayed)
             return 1;
         }
     }
-    return 0;
+    return 0; // no games played yet
 }
