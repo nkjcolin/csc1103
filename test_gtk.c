@@ -312,7 +312,7 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
     const char *const text = gtk_button_get_label(button); // get the label of the button clicked
 
     if (strlen(text) == 0)
-    { // no label means splace is clear
+    { // no label means place is clear
 
         // player O turn
         gtk_button_set_label(button, "O");
@@ -331,7 +331,7 @@ static void place_move_imp_minimax(GtkButton *button, GtkBuilder *builder, int p
         }
         else
         {
-            // let AI make the play first
+            // let AI make the play
             int move = moveAB(board) + 1;
 
             if (move == 1)
@@ -658,7 +658,6 @@ void minimax(GtkWidget *p_widget, int player)
     g_print("\nSingle Player Minimax Gameplay\n");
 
     p_window = gtk_builder_get_object(builder, "window");
-    // g_signal_connect (p_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
     // Set buttons
     button_1 = gtk_builder_get_object(builder, "button1");
@@ -679,7 +678,7 @@ void minimax(GtkWidget *p_widget, int player)
     if (player == 2)
     {
 
-        // let AI make the play first
+        // let AI make the play
         int move = AImove(board) + 1;
 
         if (move == 1)
@@ -728,7 +727,6 @@ void minimax(GtkWidget *p_widget, int player)
     gtk_label_set_text(GTK_LABEL(announcement_label), "It's your turn."); // set for the next turn after the bot has made their move or when the user goes first
 
 
-    // button is clicked, check with update_button (pass in label, placement and error)
     g_signal_connect(button_1, "clicked", G_CALLBACK(position_1_minimax), builder);
     g_signal_connect(button_2, "clicked", G_CALLBACK(position_2_minimax), builder);
     g_signal_connect(button_3, "clicked", G_CALLBACK(position_3_minimax), builder);
@@ -740,7 +738,7 @@ void minimax(GtkWidget *p_widget, int player)
     g_signal_connect(button_9, "clicked", G_CALLBACK(position_9_minimax), builder);
 
     // cannot loop just whenever the player clicks on the button that is valid the turn will increase
-    // cannot loop since the funtion will run all thats in the function
+    // cannot loop since the function will run all thats in the function
 
     gtk_widget_show_all(p_window);
 }
