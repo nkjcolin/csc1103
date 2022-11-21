@@ -1223,7 +1223,6 @@ void placeO(int b) // changed to fit gui
 // AI calculates best move using miniMax function and performs optimal move
 int AImove(int board[9]) // update to return position of where to put the move
 {
-    printf("\nPlaying with Bot A...\n");
     int score = MIN_SCORE;
     int move = 0;
 
@@ -1400,7 +1399,6 @@ int minimaxAB(int board[9], int depth, int alpha, int beta, int maxTurn)
 // returns position of next move
 int moveAB(int board[9]) 
 {
-    printf("\nPlaying with Bot B...\n");
     int score = MIN_SCORE;
     int move = 0;
 
@@ -1408,9 +1406,9 @@ int moveAB(int board[9])
     {
         if (board[i] == 0)
         {
-            board[i] = 1;
+            board[i] = 1; // makes temporary move
             int tempScore = minimaxAB(board, 0, MIN_SCORE, MAX_SCORE, 0);
-            board[i] = 0;
+            board[i] = 0; // undo move
             if (tempScore > score)
             {
                 score = tempScore;
@@ -1419,7 +1417,7 @@ int moveAB(int board[9])
         }
     }
     board[move] = 1;
-    return move;
+    return move; // return best possible position
 }
 
 // gauge difficulty level based on number of bot wins
@@ -1429,21 +1427,12 @@ int levelDifficulty(float botWins, float gamesPlayed)
     float difficulty = botWins / gamesPlayed;
     if (gamesPlayed != 0) // played at least 1 game
     {
-        if (difficulty > 0.6)
-        {
-            // Difficulty: Hard
+        if (difficulty > 0.6) // Difficulty: Hard
             return 3;
-        }
-        else if (difficulty > 0.4)
-        {
-            // Difficulty: Intermediate
+        else if (difficulty > 0.4) // Difficulty: Intermediate
             return 2;
-        }
-        else
-        {
-            // Difficulty: Easy
+        else // Difficulty: Easy
             return 1;
-        }
     }
     return 0; // no games played yet
 }
