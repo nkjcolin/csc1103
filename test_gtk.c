@@ -836,7 +836,7 @@ void imp_minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
 
     gtk_box_pack_start (GTK_BOX (hbox),
-           create_bbox_Imp_MiniMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+           create_bbox_Imp_MiniMax (FALSE, " ", 20, 85, 50, GTK_BUTTONBOX_CENTER),
 		       TRUE, TRUE, 50);
 
 
@@ -916,7 +916,7 @@ void minimax_selectplayer(GtkWidget *p_widget, gpointer user_data)
 
 
     gtk_box_pack_start (GTK_BOX (hbox),
-           create_bbox_miniMax (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+           create_bbox_miniMax (FALSE, " ", 20, 85, 50, GTK_BUTTONBOX_CENTER),
 		       TRUE, TRUE, 50);
     gtk_widget_show_all(p_window);
 
@@ -994,7 +994,7 @@ void single_player(GtkWidget *p_widget, gpointer user_data)
 
 
     gtk_box_pack_start (GTK_BOX (hbox),
-           create_bbox_single (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+           create_bbox_single (FALSE, " ", 20, 85, 50, GTK_BUTTONBOX_CENTER),
 		       TRUE, TRUE, 50);
 
     gtk_widget_show_all(p_window);
@@ -1143,7 +1143,7 @@ int main_window(int argc, char **argv)
 
 
     gtk_box_pack_start (GTK_BOX (hbox),
-           create_bbox (FALSE, "Game Menu", 20, 85, 50, GTK_BUTTONBOX_CENTER),
+           create_bbox (FALSE, " ", 20, 85, 50, GTK_BUTTONBOX_CENTER),
 		       TRUE, TRUE, 50);
 
     gtk_widget_show_all (window);
