@@ -1125,6 +1125,3 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-// Functions used taken from main - some may have been updated slightly to fit the gui
-
-
