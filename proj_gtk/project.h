@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #define MIN_SCORE -100
 #define MAX_SCORE 100
 
@@ -24,32 +22,4 @@ int player = 0;
 float gamesPlayed = 0;
 float botWins = 0;
 
-// Returns higher value
-int max(int a, int b)
-{
-    return a > b ? a : b;
-}
 
-// Returns lower value
-int min(int a, int b)
-{
-    return a < b ? a : b;
-}
-
-
-
-
-
-
-//to be split
-// Returns higher value
-int max(int a, int b)
-{
-    return a > b ? a : b;
-}
-
-// Returns lower value
-int min(int a, int b)
-{
-    return a < b ? a : b;
-}
