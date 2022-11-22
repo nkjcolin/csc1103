@@ -1,7 +1,9 @@
-final.c
-check.c
-place.c
-display.c
-twoplayer.c
-
 project.h
+
+builder.ui
+
+init.c
+tictactoe.c
+twoplayer.c
+minimax.c
+impminimax.c
