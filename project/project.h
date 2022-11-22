@@ -1,4 +1,3 @@
-
 #define MIN_SCORE -100
 #define MAX_SCORE 100
 
